@@ -10,7 +10,6 @@ namespace Lisp
             LispNIL* create() const;
             LispNIL* clone() const;
             void print(std::ostream& out) const;
-            bool identify(std::string in) const;
             bool operator==(const LispObj* other);
         protected:
             LispNIL();

@@ -1,3 +1,3 @@
 env = Environment()
-env.Program("lispp", [ "Main.cpp", "LispNil.cpp" ])
+env.Program("lispp", [ "Main.cpp", "LispNil.cpp", "LispFixNum.cpp" ])
 

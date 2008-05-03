@@ -6,8 +6,10 @@
 #include <ostream>
 #include <vector>
 
+
 namespace Lisp
 {
+    typedef long FixNumValue;
 
     class LispObj;
     class LispNIL;
@@ -29,7 +31,7 @@ namespace Lisp
                 eNullObj,
                 eStringObj,
                 eConsObj,
-                eFixnumObj,
+                eFixNumObj,
                 eFloatObj,
                 eSymbolObj,
                 ePackageObj,
@@ -49,12 +51,14 @@ namespace Lisp
             virtual void print(std::ostream& out) const = 0;
 
             /* check a string to see if it represents this kind of object */
-            virtual bool identify(std::string in) const = 0;
+            //virtual bool identify(std::string in) const = 0;
 
             /* compare by value */
             virtual bool operator==(const LispObj* other) = 0;
 
-
+            /* convert to fixnum */
+            virtual operator const FixNumValue() const { return 0; };
+            
             inline bool hasRef() {
                 return (references_ != 0);
             }
@@ -67,7 +71,6 @@ namespace Lisp
                 assert(references_ != 0);
                 references_--;
             }
-
 
 
         protected:

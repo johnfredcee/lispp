@@ -33,11 +33,6 @@ void LispNIL::print(std::ostream& out) const
     out << " NIL ";    
 }
 
-bool LispNIL::identify(std::string in) const
-{
-    return in == "NIL";
-}
-
 bool LispNIL::operator==(const LispObj* other)
 {
     return (other->getObjectType() == LispObj::eNullObj);
