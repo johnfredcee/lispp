@@ -1,0 +1,2 @@
+env = Environment(tools=["mingw"])
+env.Program("lispp", [ "Main.cpp", "LispNil.cpp", "LispFixNum.cpp" ])
