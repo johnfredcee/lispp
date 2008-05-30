@@ -11,11 +11,11 @@
 
 using namespace Lisp;
 
-LispEnv* LispEnv::root_environment = NULL;
-LispEnv* LispEnv::current_environment = NULL;
+Env* Env::root_environment = NULL;
+Env* Env::current_environment = NULL;
 
 int main(int argc, char** argv)
 {
     
-    LispEnv root;
+    Env root;
 }

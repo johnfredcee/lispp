@@ -3,17 +3,17 @@
 
 namespace Lisp
 {
-    class LispNIL : public LispObj
+    class NIL : public Obj
     {
         public:
-            LispObj::eLispObjectType getObjectType() const;
-            LispNIL* create() const;
-            LispNIL* clone() const;
+            Obj::eObjectType getObjectType() const;
+            NIL* create() const;
+            NIL* clone() const;
             void print(std::ostream& out) const;
-            bool operator==(const LispObj* other);
+            bool operator==(const Obj* other);
         protected:
-            LispNIL();
-            LispNIL(const LispNIL& other);
+            NIL();
+            NIL(const NIL& other);
     };
 }
 

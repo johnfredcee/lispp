@@ -9,29 +9,31 @@
 
 namespace Lisp
 {
-    typedef long FixNumValue;
+    typedef long FixnumValue;
+	typedef double FloatValue;
+	typedef std::string StringValue;
+	
+    class Obj;
+    class NIL;
+    class Cons;
+    class String;
+    class Fixnum;
+    class Float;
+    class Symbol;
+    class Package;
+    class Func;
 
-    class LispObj;
-    class LispNIL;
-    class LispCons;
-    class LispString;
-    class LispFixnum;
-    class LispFloat;
-    class LispSymbol;
-    class LispPackage;
-    class LispFunc;
-
-    class LispObj
+    class Obj
     {
         public:
 
-            enum eLispObjectType
+            enum eObjectType
             {
                 eBaseObj  = 0,
                 eNullObj,
                 eStringObj,
                 eConsObj,
-                eFixNumObj,
+                eFixnumObj,
                 eFloatObj,
                 eSymbolObj,
                 ePackageObj,
@@ -39,13 +41,13 @@ namespace Lisp
             };
 
             /* api any lispobj must implement */
-            virtual eLispObjectType getObjectType() const = 0;
+            virtual eObjectType getObjectType() const = 0;
 
             /* create a fresh one */
-            virtual LispObj* create(void) const = 0;
+            virtual Obj* create(void) const = 0;
 
             /* make a copy */
-            virtual LispObj* clone(void) const = 0;
+            virtual Obj* clone(void) const = 0;
 
             /* print to stream */
             virtual void print(std::ostream& out) const = 0;
@@ -54,10 +56,10 @@ namespace Lisp
             //virtual bool identify(std::string in) const = 0;
 
             /* compare by value */
-            virtual bool operator==(const LispObj* other) = 0;
+            virtual bool operator==(const Obj* other) = 0;
 
             /* convert to fixnum */
-            virtual operator const FixNumValue() const { return 0; };
+            virtual operator const FixnumValue() const { return 0; };
             
             inline bool hasRef() {
                 return (references_ != 0);
@@ -74,29 +76,29 @@ namespace Lisp
 
 
         protected:
-            LispObj() {};
-            LispObj(const LispObj& other) {};
-            LispObj& operator=(const LispObj& other) {};
+            Obj() {};
+            Obj(const Obj& other) {};
+            Obj& operator=(const Obj& other) {};
 
             std::size_t references_;
 
-    }; /* class LispObj */
+    }; /* class Obj */
 
-    class LispEnv;
+    class Env;
 
 /** The lisp environment: an associative container that associates symbols
     with their properties **/
 
-    class LispEnv {
+    class Env {
 
         private:
 
             /** parent namespace **/
-            LispEnv *parent_;
+            Env *parent_;
 
             // to do -- this needs to be a hash table or something
             // with faster lookup.
-            typedef std::pair<LispObj*,LispObj*> Binding;
+            typedef std::pair<Obj*,Obj*> Binding;
 
             std::vector<Binding> env_;
 
@@ -106,13 +108,13 @@ namespace Lisp
             class IsBound
             {
                 private:
-                    LispObj* bound_;
+                    Obj* bound_;
                 public:
-                    IsBound(LispObj* bound) :
+                    IsBound(Obj* bound) :
                         bound_(bound)
                     {}
 
-                    bool operator()(const LispEnv::Binding& binding) {
+                    bool operator()(const Env::Binding& binding) {
                         return (bound_ == binding.first);
                     }
             }; /* class IsBound */
@@ -121,7 +123,7 @@ namespace Lisp
             {
                 public:
                     DecBindingRef() {};
-                    void operator()(const LispEnv::Binding& binding) {
+                    void operator()(const Env::Binding& binding) {
                         binding.first->decRef();
                         binding.second->decRef();
                         if (!binding.first->hasRef())
@@ -132,25 +134,25 @@ namespace Lisp
             };
 
 
-            static LispEnv *root_environment;
-            static LispEnv *current_environment;
+            static Env *root_environment;
+            static Env *current_environment;
 
         public:
 
 
-            LispEnv() :
+            Env() :
                 parent_(NULL)
             {
                 root_environment = this;
                 current_environment = this;
             };
 
-            LispEnv(LispEnv* parent) :
+            Env(Env* parent) :
                 parent_(parent)
             {
             }
 
-            std::size_t add(LispObj* obj)
+            std::size_t add(Obj* obj)
             {
                 Binding bind(obj, NULL);
                 obj->incRef();
@@ -160,7 +162,7 @@ namespace Lisp
             }
 
             // test if object has been bound by value
-            bool isBound(LispObj* obj)
+            bool isBound(Obj* obj)
             {
                 std::vector<Binding>::iterator result = std::find_if(env_.begin(), env_.end(), IsBound(obj));
                 if ((result == env_.end()) && (parent_ != NULL))
@@ -171,7 +173,7 @@ namespace Lisp
 
 
             //! return pointer to bound object that has same value
-            LispObj* bound(LispObj* obj)
+            Obj* bound(Obj* obj)
             {
                 std::vector<Binding>::iterator result;
                 result = std::find_if(env_.begin(), env_.end(), IsBound(obj));
@@ -187,7 +189,7 @@ namespace Lisp
             }
 
             // return pointer to bound value
-            LispObj* boundto(LispObj* obj)
+            Obj* boundto(Obj* obj)
             {
                 std::vector<Binding>::iterator result;
                 result = std::find_if(env_.begin(), env_.end(), IsBound(obj));
@@ -201,9 +203,9 @@ namespace Lisp
             }
 
 
-            std::size_t bind(LispObj *value, LispObj* binding)
+            std::size_t bind(Obj *value, Obj* binding)
             {
-                LispObj *bindee = bound(value);
+                Obj *bindee = bound(value);
                 if (bindee == NULL)
                     bindee = value;
                 Binding bind(bindee, binding);
@@ -214,7 +216,7 @@ namespace Lisp
                 return result;
             }
 
-            void unbind(LispObj *value)
+            void unbind(Obj *value)
             {
                 std::vector<Binding>::iterator binder;
                 binder = std::find_if(env_.begin(), env_.end(), IsBound(value));
@@ -232,19 +234,19 @@ namespace Lisp
                 return;
             }
 
-            LispEnv *child(void)
+            Env *child(void)
             {
-                current_environment = new LispEnv(this);
+                current_environment = new Env(this);
                 return current_environment;
             }
 
-            virtual ~LispEnv()
+            virtual ~Env()
             {
                 DecBindingRef finalizer;
                 for_each(env_.begin(), env_.end(), finalizer);
 
-                assert(this == LispEnv::current_environment);
-                LispEnv::current_environment = parent_;
+                assert(this == Env::current_environment);
+                Env::current_environment = parent_;
             }
 
     };

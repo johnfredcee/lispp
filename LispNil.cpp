@@ -4,36 +4,36 @@
 
 using namespace Lisp;
 
-LispNIL::LispNIL()
+NIL::NIL()
 {
 }
 
-LispNIL::LispNIL(const LispNIL& other)
+NIL::NIL(const NIL& other)
 {
 }
 
-LispObj::eLispObjectType LispNIL::getObjectType() const
+Obj::eObjectType NIL::getObjectType() const
 {
-    return LispObj::eNullObj;
+    return Obj::eNullObj;
 }
 
-LispNIL* LispNIL::create() const
+NIL* NIL::create() const
 {
-    return new LispNIL();
+    return new NIL();
 }
 
 
-LispNIL* LispNIL::clone() const
+NIL* NIL::clone() const
 {
-    return new LispNIL(*this);
+    return new NIL(*this);
 }
 
-void LispNIL::print(std::ostream& out) const
+void NIL::print(std::ostream& out) const
 {
     out << " NIL ";    
 }
 
-bool LispNIL::operator==(const LispObj* other)
+bool NIL::operator==(const Obj* other)
 {
-    return (other->getObjectType() == LispObj::eNullObj);
+    return (other->getObjectType() == Obj::eNullObj);
 }
