@@ -10,7 +10,7 @@
 namespace Lisp
 {
     typedef long FixnumValue;
-	typedef double FloatValue;
+	typedef double FloatnumValue;
 	typedef std::string StringValue;
 	
     class Obj;
@@ -18,7 +18,7 @@ namespace Lisp
     class Cons;
     class String;
     class Fixnum;
-    class Float;
+    class Floatnum;
     class Symbol;
     class Package;
     class Func;
@@ -34,7 +34,7 @@ namespace Lisp
                 eStringObj,
                 eConsObj,
                 eFixnumObj,
-                eFloatObj,
+                eFloatnumObj,
                 eSymbolObj,
                 ePackageObj,
                 eFunctionObj

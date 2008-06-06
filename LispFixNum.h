@@ -39,14 +39,7 @@ namespace Lisp
 			FixnumPtr result = new Fixnum(*this);
 			return result;
 		}
-			
-					
-									  
-		void getObjectType(Obj::eObjectType& kind)
-		{
-			kind = Obj::eFixnumObj;
-		}
-			
+														  			
 		void print(std::ostream& out) const
 		{
 			out << value_;

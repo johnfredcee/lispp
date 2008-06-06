@@ -2,100 +2,56 @@
 #define H_LISPFLOAT
 
 namespace Lisp
-{
-	
-	class LispFloat;
+{	
 
-	class LispFloat : public LispObj
+	class Floatnum : public Obj
 	{
-		public:
+	public:
 
-			typedef LispFloat* LispFloatPtr;
-			typedef LispFloat& LispFloatRef;			
+		typedef Floatnum* FloatnumPtr;
+		typedef Floatnum& FloatnumRef;			
 
-			LispFloat() : value_(0)
-			{};
+		Floatnum() : value_(0.0)
+		{};
 			
-			LispFloat(const LispFloat& other)
-			{
-				if (this != &other)
-					value_ = other.value_;
-			};
-			
-			LispFloat& operator=(const LispFloat& other)
-			{
-				if (this != &other)
-					value_ = other.value_;
-				return *this;
-			}
-			
-			virtual LispFloatRef clone() const
-			{
-				LispFloat* result = new LispFloat(*this);
-				return *result;
-			}
-			
-			virtual LispFloatRef create(void)
-			{
-				LispFloat *result = new LispFloat();
-				return *result;
-			}
-			
-			operator LispFloatValue()
-			{
-				return value_;
-			}
+		Floatnum(const Floatnum& other)
+		{
+			if (this != &other)
+				value_ = other.value_;
+		};
+		
+		virtual eObjectType getObjectType() const
+		{
+			return eFloatnumObj;
+		}
 
-			operator LispFixnumValue()
-			{
-				return static_cast<LispFixnumValue>(value_);
-			}
+		virtual Floatnum* create(void) const
+		{
+			Floatnum *result = new Floatnum();
+			return result;
+		}
 
-			operator LispStringValue()
-			{
-				std::ostringstream value_stream;
-				value_stream << value_;
-				return value_stream.str();
-			}
+		virtual Floatnum* clone() const
+		{
+			Floatnum* result = new Floatnum(*this);
+			return result;
+		}
+					   							
+		void print(std::ostream& out) const
+		{
+			out << value_;
+		}
 
-			LispFloat& operator=(LispFloatValue& fval)
-			{
-				value_ = fval;
-				return *this;
-			}
-			
-			LispFloat& operator=(LispFixnumValue& fixnum)
-			{
-				value_ = static_cast<LispFixnumValue>(fixnum);
-				return *this;
-			}
-			
-			LispFloat& operator=(LispStringValue &str)
-			{
-				std::istringstream value_stream(str);
-				value_stream >> value_;
-				return *this;
-			}
-				
-
-			void getObjectType(LispObj::eLispObjectType& kind)
-			{
-				kind = LispObj::eFloatObj;
-			}
-			
-			void print(std::ostream& out) const
-			{
-				out << value_;
-			}
-
-			LispObjPtr read(std::istream& in)
-			{
-				in >> value_;
-			}
-
-			
-		private:
-			LispFloatValue value_;
+		bool operator==(const Obj* other)
+		{
+			bool result = false;
+			if (other->getObjectType() == eFloatnumObj)
+				result = ( value_ == dynamic_cast<const Floatnum *>(other)->value_ );			
+			return result;
+		}
+		
+	private:
+		FloatnumValue value_;
 			
 	};
 	

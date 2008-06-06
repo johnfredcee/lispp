@@ -6,5 +6,7 @@
 #include <vector>
 #include <iostream>
 
-#include "lispobj.h"
-#include "lispfloat.h"
+#include "LispObj.h"
+#include "LispFloat.h"
+
+using namespace Lisp;
