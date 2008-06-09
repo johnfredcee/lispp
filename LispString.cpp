@@ -6,5 +6,5 @@
 #include <vector>
 #include <iostream>
 
-#include "lispobj.h"
-#include "lispstring.h"
+#include "LispObj.h"
+#include "LispString.h"

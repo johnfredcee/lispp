@@ -5,13 +5,14 @@
 #include <cassert>
 #include <ostream>
 #include <vector>
-
+#include <string>
 
 namespace Lisp
 {
     typedef long FixnumValue;
 	typedef double FloatnumValue;
 	typedef std::string StringValue;
+	typedef struct { LispObj *head, LispObj *tail } Cons;
 	
     class Obj;
     class NIL;
