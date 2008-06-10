@@ -17,6 +17,11 @@ Obj::eObjectType NIL::getObjectType() const
     return Obj::eNullObj;
 }
 
+NIL* NIL::make() 
+{
+    return new NIL();
+}
+
 NIL* NIL::create() const
 {
     return new NIL();

@@ -9,10 +9,6 @@
 
 namespace Lisp
 {
-    typedef long FixnumValue;
-	typedef double FloatnumValue;
-	typedef std::string StringValue;
-	typedef struct { LispObj *head, LispObj *tail } Cons;
 	
     class Obj;
     class NIL;
@@ -23,6 +19,7 @@ namespace Lisp
     class Symbol;
     class Package;
     class Func;
+
 
     class Obj
     {
@@ -58,9 +55,6 @@ namespace Lisp
 
             /* compare by value */
             virtual bool operator==(const Obj* other) = 0;
-
-            /* convert to fixnum */
-            virtual operator const FixnumValue() const { return 0; };
             
             inline bool hasRef() {
                 return (references_ != 0);
@@ -85,6 +79,10 @@ namespace Lisp
 
     }; /* class Obj */
 
+	typedef long FixnumValue;
+	typedef double FloatnumValue;
+	typedef std::string StringValue;
+	
     class Env;
 
 /** The lisp environment: an associative container that associates symbols
