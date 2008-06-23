@@ -1,4 +1,3 @@
-
 #if !defined(H_LISPSTRING)
 #define H_LISPSTRING
 
@@ -56,4 +55,3 @@ namespace Lisp
 }
 
 #endif
-
