@@ -6,6 +6,7 @@
 #include <ostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 namespace Lisp
 {
