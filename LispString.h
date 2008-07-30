@@ -42,6 +42,16 @@ namespace Lisp
 			out << "\"" << value_ << "\"";
 		}
 
+		StringValue value()
+		{
+			return value_;
+		}
+
+		void value(StringValue value)
+		{
+			value_ = value;
+		}
+		
 		bool operator==(const Obj* other)
 		{
 			bool result = false;

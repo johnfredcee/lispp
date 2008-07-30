@@ -4,8 +4,11 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <ios>
 #include <iostream>
+#include <sstream>
 
-#include "lispobj.h"
-#include "lispstring.h"
-#include "lispsymbol.h"
+#include "LispObj.h"
+#include "LispString.h"
+#include "LispCons.h"
+#include "LispSymbol.h"

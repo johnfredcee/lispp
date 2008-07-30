@@ -1,88 +1,101 @@
-#if !defined(H_LISPSYMBOL)
-#define H_LISPSYMBOL
+#if !defined(LISP_SYMBOL_H_INCLUDED)
+#define LISP_SYMBOL_H_INCLUDED
 
 namespace Lisp
 {
-	class LispSymbol;
+class Symbol;
 
-	class LispSymbol : public LispObj
+class Symbol : public Obj
+{
+	typedef Symbol* SymbolPtr;			
+	typedef Symbol& SymbolRef;
+			
+public:
+
+	// default constructor == gensym
+	Symbol()
 	{
-			typedef LispSymbol& LispSymbolPtr;			
-			typedef LispSymbol& LispSymbolRef;
-			
-		public:
-			LispSymbol()
-			{
-				symbol_count++;
-				std::ostringstream value_stream;
-				value_stream.setf( ios::hex, ios::basefield );
-				value_stream.width( 8 );
-				value_stream.fill( '0' );
-				value_stream << "Sym#" << ios::hex() << this << " " << car_ << " " cdr_;
-				name_ = value_stream.str();
-			}
-			
-			LispSymbol(LispStringValue& name) : name_(name)
-			{
-				symbol_count++;
-			}
-
-			LispSymbol(LispStringValue& name, LispObj& obj)
-			{
-				plist->car(obj);
-			}
-
-			LispSymbol(LispSymbol& other)
-			{
-				if (&other != this)
-				{
-					name_ = other->name_;
-					plist_ = other->plist_;
-					symbol_count++;
-				}
-			}
-
-			LispSymbol& operator=(LispSymbol& other)
-			{
-				if (&other != this)
-				{
-					name_ = other->name_;
-					plist_ = other->plist_;
-					symbol_count++;
-				}
-				return *this;
-			}
-			
-			operator LispObjRef()
-			{
-				return plist->car();
-			}
-
-			LispObjRef plist()
-			{
-				return plist->cdr();
-			}
-
-			LispSymbolRef operator=(LispObjRef& val)
-			{
-				plist->car(val);
-			}
-
-			operator LispStringVal()
-			{
-				return name_;
-			}
-			
-			void getObjectType(LispObj::eLispObjectType& kind)
-			{
-				kind = LispObj::eSymbolObj;
-			}
-			
-		private:
-			LispStringValue name_;
-			LispCons plist_;
-			static LispFixnumValue symbol_count;
+		symbol_count++;
+		std::ostringstream value_stream;
+		value_stream.setf( std::ios::hex, std::ios::basefield );
+		value_stream.width( 8 );
+		value_stream.fill( '0' );
+		value_stream << "Sym#" << std::ios::hex << this << " ";
+		name_ = value_stream.str();
 	}
+			
+	Symbol(const Symbol& other)
+	{
+		if (&other != this)
+		{
+			name_ = other.name_;
+			plist_ = other.plist_;
+			symbol_count++;
+		}
+	}
+
+	virtual eObjectType getObjectType() const
+	{
+		return eSymbolObj;
+	}
+
+	virtual Symbol* create(void) const
+	{
+		SymbolPtr result = new Symbol();
+		return result;
+	}
+
+	virtual Symbol* clone() const
+	{
+		SymbolPtr result = new Symbol(*this);
+		return result;
+	}
+
+	void print(std::ostream& out) const
+	{
+		out << name_;
+	}
+
+// 	bool identify(std::string in) const
+// 	{
+// 	}
+	
+
+	StringValue name()
+	{
+		return name_;
+	}
+
+	void name(StringValue& name)
+	{
+		name_ = name;
+	}			
+
+	Cons::ConsRef plist()
+	{
+		return plist_;
+	}
+
+	void plist(Cons::ConsRef plist)
+	{
+		plist_ = plist;
+	}
+	
+	bool operator==(const Obj* other)
+	{
+		bool result = false;
+
+		// comparison of two symbols is only T if they are the same symbol
+		if (other->getObjectType() == eSymbolObj)
+			result = (other == this);
+		return result;
+	}
+			
+private:
+	StringValue name_;
+	Cons plist_;
+	static FixnumValue symbol_count;
+};
 	
 }
 
