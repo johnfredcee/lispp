@@ -11,11 +11,12 @@
 
 using namespace Lisp;
 
-Env* Env::root_environment = NULL;
-Env* Env::current_environment = NULL;
+//Env* Env::root_environment = NULL;
+//Env* Env::current_environment = NULL;
 
 int main(int argc, char** argv)
 {
-    
-    Env root;
+	long long thing;
+	std::cout << sizeof(thing);
+//    Env root;
 }

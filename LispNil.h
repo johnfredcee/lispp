@@ -3,20 +3,9 @@
 
 namespace Lisp
 {
-    class NIL : public Obj
-    {
-	public:
+// the singulariy is here!
+extern LispObj nil;
 
-		Obj::eObjectType getObjectType() const;
-		static NIL *make();
-		NIL* create() const;
-		NIL* clone() const;
-		void print(std::ostream& out) const;
-		bool operator==(const Obj* other);
-	protected:
-		NIL();
-		NIL(const NIL& other);
-    };
 }
 
 

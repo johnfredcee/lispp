@@ -4,63 +4,20 @@
 
 namespace Lisp
 {
-	
-class Fixnum;
-
-class Fixnum : public Obj
+struct Fixnum : public struct LispObj
 {
-public:
-
-	typedef Fixnum* FixnumPtr;
-	typedef Fixnum& FixnumRef;			
-
-	Fixnum() : value_(0)
-	{};
-			
-	Fixnum(const Fixnum& other)
+	void make(FixnumType v)
 	{
-		if (this != &other)
-			value_ = other.value_;
-	};
-
-	virtual eObjectType getObjectType() const
-	{
-		return eFixnumObj;
-	}
-		
-	virtual Fixnum* create(void) const
-	{
-		FixnumPtr result = new Fixnum();
-		return result;
+		setType(eFixnumObj);
+		object.resize(1);
+		object[0] = v;
 	}
 
-	virtual Fixnum* clone() const
-	{
-		FixnumPtr result = new Fixnum(*this);
-		return result;
+	FixnumType value() {
+		return object[0];
 	}
-														  			
-	void print(std::ostream& out) const
-	{
-		out << value_;
-	}
-
-// 			bool identify(std::string in) const
-// 			{
-// 				in >> value_;
-// 			}
-
-	bool operator==(const Obj* other)
-	{
-		bool result = false;
-		if (other->getObjectType() == eFixnumObj)
-			result = ( value_ == dynamic_cast<const Fixnum*>(other)->value_ );
-		return result;
-	}
-private:
-	FixnumValue value_;
-			
 };
+			
 
 }
 

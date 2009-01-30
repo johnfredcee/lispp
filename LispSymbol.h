@@ -3,101 +3,53 @@
 
 namespace Lisp
 {
-class Symbol;
 
-class Symbol : public Obj
+
+struct Symbol : public struct LispObj
 {
-	typedef Symbol* SymbolPtr;			
-	typedef Symbol& SymbolRef;
-			
-public:
+	void make(const CharType *symname)
+	{
+		int i = 0;
 
-	// default constructor == gensym
-	Symbol()
-	{
-		symbol_count++;
-		std::ostringstream value_stream;
-		value_stream.setf( std::ios::hex, std::ios::basefield );
-		value_stream.width( 8 );
-		value_stream.fill( '0' );
-		value_stream << "Sym#" << std::ios::hex << this << " ";
-		name_ = value_stream.str();
-	}
-			
-	Symbol(const Symbol& other)
-	{
-		if (&other != this)
+		setType(eSymbolObj);
+
+		// calc length
+		while (*symname != '\0')
 		{
-			name_ = other.name_;
-			plist_ = other.plist_;
-			symbol_count++;
+			++i;
+			++symname;
 		}
+
+		// insert the pigs
+		object.resize(i+1);
+		symname = symname - i;
+		i = 0;
+		while(*symname != '\0')
+		{
+			object[i] = *symname;
+			++i;
+			++symname;
+		}
+		object[i+1] = '\0';
 	}
 
-	virtual eObjectType getObjectType() const
+	CharType& operator[](std::size_t i) 
 	{
-		return eSymbolObj;
+		return object[i];
 	}
 
-	virtual Symbol* create(void) const
+	const CharType& operator[](std::size_t i) const
 	{
-		SymbolPtr result = new Symbol();
-		return result;
+		return object[i];
 	}
 
-	virtual Symbol* clone() const
+	std::size_t length()
 	{
-		SymbolPtr result = new Symbol(*this);
-		return result;
+		return object[i].size();
 	}
-
-	void print(std::ostream& out) const
-	{
-		out << name_;
-	}
-
-// 	bool identify(std::string in) const
-// 	{
-// 	}
-	
-
-	StringValue name()
-	{
-		return name_;
-	}
-
-	void name(StringValue& name)
-	{
-		name_ = name;
-	}			
-
-	Cons::ConsRef plist()
-	{
-		return plist_;
-	}
-
-	void plist(Cons::ConsRef plist)
-	{
-		plist_ = plist;
-	}
-	
-	bool operator==(const Obj* other)
-	{
-		bool result = false;
-
-		// comparison of two symbols is only T if they are the same symbol
-		if (other->getObjectType() == eSymbolObj)
-			result = (other == this);
-		return result;
-	}
-			
-private:
-	StringValue name_;
-	Cons plist_;
-	static FixnumValue symbol_count;
 };
-	
-}
+
+} // end namespace lisp
+
 
 #endif
-

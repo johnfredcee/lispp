@@ -11,248 +11,240 @@
 namespace Lisp
 {
 	
-    class Obj;
-    class NIL;
-    class Cons;
-    class String;
-    class Fixnum;
-    class Floatnum;
-    class Symbol;
-    class Package;
-    class Func;
 
 
-    class Obj
-    {
-        public:
-
-            enum eObjectType
-            {
-                eBaseObj  = 0,
-                eNullObj,
-                eStringObj,
-                eConsObj,
-                eFixnumObj,
-                eFloatnumObj,
-                eSymbolObj,
-                ePackageObj,
-                eFunctionObj
-            };
-
-            /* api any lispobj must implement */
-            virtual eObjectType getObjectType() const = 0;
-
-            /* create a fresh one */
-            virtual Obj* create(void) const = 0;
-
-            /* make a copy */
-            virtual Obj* clone(void) const = 0;
-
-            /* print to stream */
-            virtual void print(std::ostream& out) const = 0;
-
-            /* check a string to see if it represents this kind of object */
-            //virtual bool identify(std::string in) const = 0;
-
-            /* compare by value */
-            virtual bool operator==(const Obj* other) = 0;
-            
-            inline bool hasRef() {
-                return (references_ != 0);
-            }
-
-            inline void incRef() {
-                references_++;
-            }
-
-            inline void decRef() {
-                assert(references_ != 0);
-                references_--;
-            }
+enum eObjectType
+{
+	eBaseObj  = 0,
+	eNullObj,
+	eStringObj,
+	eConsObj,
+	eFixnumObj,
+	eFloatnumObj,
+	eSymbolObj,
+	ePackageObj,
+	eFunctionObj
+};
 
 
-        protected:
-            Obj() {};
-            Obj(const Obj& other) {};
-            Obj& operator=(const Obj& other) {};
+typedef signed char s8;
+typedef signed short s16;
+typedef signed int s32;
+typedef signed long s64;
+typedef signed long long s128;
 
-            std::size_t references_;
+typedef unsigned char u8;
+typedef unsigned short u16;
+typedef unsigned int u32;
+typedef unsigned long u64;
+typedef unsigned long long u128;
 
-    }; /* class Obj */
+typedef float f32;
+typedef double f64;
 
-	typedef long FixnumValue;
-	typedef double FloatnumValue;
-	typedef std::string StringValue;
+typedef u8 CharType;
+typedef u32 FixnumType;
+typedef f32 FloatnumType;
+typedef void * (*PrimitivePtr)(void *);
+
+struct LispObj;
+
+// smart pointer for pointing at lisp objects
+template <typename T> class ObjPtr
+{
+public:	
+	typedef T* ActualPtrType;
+	explicit ObjPtr( T* o ) : p_(o) {};
+//	~ObjPtr( ) { delete p_; }
+	T* operator->() { return get(); };
+	T& operator*() { return *get(); };
+
+private:
+	T* get() 
+	{
+		return p_;
+	}
 	
-    class Env;
+	void set(void *p)
+	{
+		p_ = reinterpret_cast<T*>(p);
+	}
 
-/** The lisp environment: an associative container that associates symbols
-    with their properties **/
+	T* p_;
 
-    class Env {
+	template <typename ActualT, typename CharT, typename FixnumT, typename FloatnumT, typename PrimType, typename PtrType>
+	friend class TLispValue;
+};
 
-        private:
+// this is what we use to point at a lisp object
+typedef ObjPtr<LispObj> PointerType;
 
-            /** parent namespace **/
-            Env *parent_;
+// straight primitive call with no environment / args
+class PrimitiveType
+{
+public:
+	explicit Primitive(PrimitivePtr f) : fn_(f) {}
+	PointerType operator()(PointerType**p)
+	{
+		return fn_(p):		
+	}
+private:
+	PrimitivePtr fn_;
+};
 
-            // to do -- this needs to be a hash table or something
-            // with faster lookup.
-            typedef std::pair<Obj*,Obj*> Binding;
+// object data with a tag
+template <typename T, typename D, template <typename> class C>
+class TaggedObjData
+{
+public:	
 
-            std::vector<Binding> env_;
+	typedef T TagType;
+	typedef D ValueType;
+	typedef C<D> ValueContainerType;
 
-            /**
-             * detect if a symbol is bound
-             */
-            class IsBound
-            {
-                private:
-                    Obj* bound_;
-                public:
-                    IsBound(Obj* bound) :
-                        bound_(bound)
-                    {}
+	T tag;
+	ValueContainerType values;
+	
+	
+	// T needs to implement sthing which will transform a tag to a
+	// object type
+	eObjectType getType()
+	{
+		return T::getType(tag);
+	}
+	
+	// Container needs to be sanely indexable
+	D& operator[](std::size_t i)
+	{
+		return values[i];		
+	}
+	
+	const D& operator[](std::size_t i) const
+	{
+		return values[i];		
+	}
+	
+	// container must have capacity
+	void resize(std::size_t s)
+	{
+		values.reserve(s);
+		values.resize(s);
+	}
 
-                    bool operator()(const Env::Binding& binding) {
-                        return (bound_ == binding.first);
-                    }
-            }; /* class IsBound */
+	// must be able to tell what that capacity is
+	std::size_t size() const
+	{
+		return values.size();
+	}
 
-            class DecBindingRef
-            {
-                public:
-                    DecBindingRef() {};
-                    void operator()(const Env::Binding& binding) {
-                        binding.first->decRef();
-                        binding.second->decRef();
-                        if (!binding.first->hasRef())
-                            delete binding.first;
-                        if (!binding.second->hasRef())
-                            delete binding.second;
-                    }
-            };
-
-
-            static Env *root_environment;
-            static Env *current_environment;
-
-        public:
-
-
-            Env() :
-                parent_(NULL)
-            {
-                root_environment = this;
-                current_environment = this;
-            };
-
-            Env(Env* parent) :
-                parent_(parent)
-            {
-            }
-
-            std::size_t add(Obj* obj)
-            {
-                Binding bind(obj, NULL);
-                obj->incRef();
-                std::size_t result = env_.size();
-                env_.push_back(bind);
-                return result;
-            }
-
-            // test if object has been bound by value
-            bool isBound(Obj* obj)
-            {
-                std::vector<Binding>::iterator result = std::find_if(env_.begin(), env_.end(), IsBound(obj));
-                if ((result == env_.end()) && (parent_ != NULL))
-                    return parent_->isBound(obj);
-                else
-                    return (result != env_.end());
-            }
+};
 
 
-            //! return pointer to bound object that has same value
-            Obj* bound(Obj* obj)
-            {
-                std::vector<Binding>::iterator result;
-                result = std::find_if(env_.begin(), env_.end(), IsBound(obj));
-                if (result == env_.end()) {
-                    if (parent_ != NULL)
-                    {
-                        return parent_->bound(obj);
-                    } else
-                        return NULL;
-                } else {
-                    return result->first;
-                }
-            }
+// Primitive unboxed values (this must be POD)
+template <typename ActualT, typename CharT, typename FixnumT, typename FloatnumT, typename PrimT, typename PtrT, typename ActualPtrT> class TLispValue
+{
+public:	
+	ActualT value;
+	
+	// need to be ablue to convert between ActualType and these types
+	operator PtrT()
+	{
+		// pure evil!
+		ActualPtrT* ptr = reinterpret_cast<ActualPtrT*>(&value);		
+		return PtrT(*ptr);
+	}
 
-            // return pointer to bound value
-            Obj* boundto(Obj* obj)
-            {
-                std::vector<Binding>::iterator result;
-                result = std::find_if(env_.begin(), env_.end(), IsBound(obj));
-                if (result == env_.end())
-                    if (parent_ != NULL)
-                        return parent_->boundto(obj);
-                    else
-                        return NULL;
-                else
-                    return result->second;
-            }
+			// we can't overload by return type, so we use value conversion instead
+	operator FixnumT()
+	{
+		return value;
+	};
+	
+	operator FloatnumT()
+	{
+		return *(static_cast<FloatnumT*>(&value));
+	}
+
+	operator CharT()
+	{
+		return *(static_cast<CharT*>(&value));
+	};
+	
+	operator PrimT()
+	{
+		return *(static_cast<PrimT*>(&value));
+	}
+
+	// operator=, but then is this POD ?
+	TLispValue& operator=(PtrT ptr)
+	{
+		ActualPtrT* lhsptr = static_cast<ActualPtrT*>(&value);		
+		*lhsptr = ptr.get();
+		return *this;
+	}
+	
+	TLispValue& operator=(FixnumT fn)
+	{
+		value = fn;
+		return *this;
+	}
+	
+	TLispValue& set(FloatnumT fn)
+	{
+		(*static_cast<FloatnumT*>(&value))  = fn;
+		return *this;
+	}
+	
+	TLispValue& operator=(CharT ch)		
+	{
+		(*static_cast<CharT*>(&value))  = ch;
+		return *this;
+	}
+	
+	TLispValue& operator=(PrimT prim)
+	{
+		(*static_cast<PrimT*>(&value))  = prim;
+		return *this;
+	}
+	
+};
 
 
-            std::size_t bind(Obj *value, Obj* binding)
-            {
-                Obj *bindee = bound(value);
-                if (bindee == NULL)
-                    bindee = value;
-                Binding bind(bindee, binding);
-                bindee->incRef();
-                binding->incRef();
-                std::size_t result = env_.size();
-                env_.push_back(bind);
-                return result;
-            }
 
-            void unbind(Obj *value)
-            {
-                std::vector<Binding>::iterator binder;
-                binder = std::find_if(env_.begin(), env_.end(), IsBound(value));
-                if (binder == env_.end()) {
-                    if (parent_ != NULL)
-                        parent_->unbind(value);
-                    else
-                        return;
-                }
-                else {
-                    DecBindingRef finalizer;
-                    finalizer(*binder);
-                    env_.erase(binder);
-                }
-                return;
-            }
 
-            Env *child(void)
-            {
-                current_environment = new Env(this);
-                return current_environment;
-            }
+// tag types (this doesn't have to be POD, but its advisable)
+template <typename T> class Tag
+{
+	T tagValue;
+	
+	void setType(eObjectType tag)
+	{
+		tagValue = static_cast<eObjectType>(tagValue);
+	}
+	
+	eObjectType getType()
+	{
+		static_cast<eObjectType>(tagValue);
+	}
+};
 
-            virtual ~Env()
-            {
-                DecBindingRef finalizer;
-                for_each(env_.begin(), env_.end(), finalizer);
+typedef Tag<u8> LispTag;
+typedef TLispValue<u128, CharType, FixnumType, FloatnumType, PrimitiveType, PointerType, LispObj*> LispValue;
 
-                assert(this == Env::current_environment);
-                Env::current_environment = parent_;
-            }
 
-    };
+// TO DO -- template template parameters?
 
-}
+struct LispObj {
+	TaggedObjData<Tag<unsigned char>, LispValue, std::vector>  object;
+};
 
+
+
+
+
+
+} // end namespace lisp
+	
 
 #endif
 
