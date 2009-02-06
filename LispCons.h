@@ -6,6 +6,7 @@
 
 namespace Lisp
 {
+
 struct Cons : public struct LispObj
 {
 
@@ -28,6 +29,7 @@ struct Cons : public struct LispObj
 		return object[1];
 	}
 };
+
 
 }
 

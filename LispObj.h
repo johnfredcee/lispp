@@ -59,6 +59,12 @@ public:
 	T* operator->() { return get(); };
 	T& operator*() { return *get(); };
 
+	template class<D>
+	operator ObjPtr<D>()
+	{
+		return ObjPtr<D>(p_);
+	}
+	
 private:
 	T* get() 
 	{
