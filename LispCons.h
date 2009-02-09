@@ -7,13 +7,13 @@
 namespace Lisp
 {
 
-struct Cons : public struct LispObj
+struct Cons : public LispObj
 {
 
 	void make(PointerType car, PointerType cdr)
 	{
-		setType(eConsObj);
-		object_.resize(2);
+		object.tag.setType(eConsObj);
+		object.resize(2);
 		object[0] = car;
 		object[1] = cdr;
 	}

@@ -5,7 +5,7 @@ namespace Lisp
 {
 
 
-struct Symbol : public struct LispObj
+struct Symbol : public LispObj
 {
 	void make(const CharType *symname)
 	{
@@ -46,6 +46,23 @@ struct Symbol : public struct LispObj
 	std::size_t length()
 	{
 		return object[i].size();
+	}
+
+	bool operator==(const Symbol& sym)
+	{
+		if (sym.length() == length())
+		{
+			bool result = true;			
+			std::size_t i = 0;
+			
+			while ((i < size()) && result)
+			{
+				result = (object[i] == sym.object[i]);
+				i++;
+			}
+			return result
+		}
+		return false;
 	}
 };
 

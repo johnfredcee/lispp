@@ -45,7 +45,7 @@ typedef double f64;
 typedef u8 CharType;
 typedef u32 FixnumType;
 typedef f32 FloatnumType;
-typedef void * (*PrimitivePtr)(void *);
+
 
 struct LispObj;
 
@@ -59,13 +59,15 @@ public:
 	T* operator->() { return get(); };
 	T& operator*() { return *get(); };
 
-	template class<D>
+	template <typename D>
 	operator ObjPtr<D>()
 	{
 		return ObjPtr<D>(p_);
 	}
 	
 private:
+	explicit ObjPtr( void* o ) : p_(static_cast<T*>(o)) {};
+	
 	T* get() 
 	{
 		return p_;
@@ -85,18 +87,25 @@ private:
 // this is what we use to point at a lisp object
 typedef ObjPtr<LispObj> PointerType;
 
+
 // straight primitive call with no environment / args
-class PrimitiveType
+template <typename ArgPointer, template <typename> class ArgContainer>
+class PrimitiveT
 {
 public:
-	explicit Primitive(PrimitivePtr f) : fn_(f) {}
-	PointerType operator()(PointerType**p)
-	{
-		return fn_(p):		
-	}
-private:
-	PrimitivePtr fn_;
+    // err..what does a smart pointer to a pointer look like?
+	typedef PointerType (*PrimitivePtr)(ArgContainer<ArgPointer>& args);
+	
+	explicit PrimitiveT(PrimitivePtr f) : fn_(f) {}
+	PointerType operator()(ArgContainer<ArgPointer>& p)
+ 	{
+ 		return fn_(p);
+ 	}
+ private:
+ 	PrimitivePtr fn_;
 };
+
+typedef PrimitiveT< ObjPtr<LispObj>, std::vector > PrimitiveType;
 
 // object data with a tag
 template <typename T, typename D, template <typename> class C>
@@ -147,7 +156,7 @@ public:
 
 
 // Primitive unboxed values (this must be POD)
-template <typename ActualT, typename CharT, typename FixnumT, typename FloatnumT, typename PrimT, typename PtrT, typename ActualPtrT> class TLispValue
+template <typename ActualT, typename CharT, typename FixnumT, typename FloatnumT, typename PrimT, typename PtrT> class TLispValue
 {
 public:	
 	ActualT value;
@@ -156,11 +165,10 @@ public:
 	operator PtrT()
 	{
 		// pure evil!
-		ActualPtrT* ptr = reinterpret_cast<ActualPtrT*>(&value);		
-		return PtrT(*ptr);
+		return PtrT(reinterpret_cast<void*>(value));
 	}
 
-			// we can't overload by return type, so we use value conversion instead
+	// we can't overload by return type, so we use value conversion instead
 	operator FixnumT()
 	{
 		return value;
@@ -184,8 +192,7 @@ public:
 	// operator=, but then is this POD ?
 	TLispValue& operator=(PtrT ptr)
 	{
-		ActualPtrT* lhsptr = static_cast<ActualPtrT*>(&value);		
-		*lhsptr = ptr.get();
+		value = reinterpret_cast<ActualT>(reinterpret_cast<void*>(ptr.get()));
 		return *this;
 	}
 	
@@ -216,13 +223,13 @@ public:
 };
 
 
-
-
 // tag types (this doesn't have to be POD, but its advisable)
 template <typename T> class Tag
 {
+private:	
 	T tagValue;
-	
+
+public:	
 	void setType(eObjectType tag)
 	{
 		tagValue = static_cast<eObjectType>(tagValue);
@@ -235,7 +242,7 @@ template <typename T> class Tag
 };
 
 typedef Tag<u8> LispTag;
-typedef TLispValue<u128, CharType, FixnumType, FloatnumType, PrimitiveType, PointerType, LispObj*> LispValue;
+typedef TLispValue<u128, CharType, FixnumType, FloatnumType, PrimitiveType, PointerType> LispValue;
 
 
 // TO DO -- template template parameters?
