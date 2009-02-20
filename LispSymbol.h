@@ -11,7 +11,7 @@ struct Symbol : public LispObj
 	{
 		int i = 0;
 
-		setType(eSymbolObj);
+		object.setType(eSymbolObj);
 
 		// calc length
 		while (*symname != '\0')
@@ -21,31 +21,20 @@ struct Symbol : public LispObj
 		}
 
 		// insert the pigs
-		object.resize(i+1);
+		object.values.resize(i);
 		symname = symname - i;
 		i = 0;
 		while(*symname != '\0')
 		{
-			object[i] = *symname;
+			object.values.push_back( LispValue( *symname ) );
 			++i;
 			++symname;
 		}
-		object[i+1] = '\0';
 	}
 
-	CharType& operator[](std::size_t i) 
+	std::size_t length() const
 	{
-		return object[i];
-	}
-
-	const CharType& operator[](std::size_t i) const
-	{
-		return object[i];
-	}
-
-	std::size_t length()
-	{
-		return object[i].size();
+		return object.values.size();
 	}
 
 	bool operator==(const Symbol& sym)
@@ -55,12 +44,14 @@ struct Symbol : public LispObj
 			bool result = true;			
 			std::size_t i = 0;
 			
-			while ((i < size()) && result)
+			while ((i < length()) && result)
 			{
-				result = (object[i] == sym.object[i]);
+				result = (
+					CharType(sym.object.values[i]) ==
+					CharType(object.values[i]) );
 				i++;
 			}
-			return result
+			return result;
 		}
 		return false;
 	}

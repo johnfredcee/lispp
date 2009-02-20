@@ -68,12 +68,12 @@ public:
 private:
 	explicit ObjPtr( void* o ) : p_(static_cast<T*>(o)) {};
 	
-	T* get() 
+	T* get() const
 	{
 		return p_;
 	}
 	
-	void set(void *p)
+	void set(const void *p)
 	{
 		p_ = reinterpret_cast<T*>(p);
 	}
@@ -107,52 +107,6 @@ public:
 
 typedef PrimitiveT< ObjPtr<LispObj>, std::vector > PrimitiveType;
 
-// object data with a tag
-template <typename T, typename D, template <typename> class C>
-class TaggedObjData
-{
-public:	
-
-	typedef T TagType;
-	typedef D ValueType;
-	typedef C<D> ValueContainerType;
-
-	T tag;
-	ValueContainerType values;
-	
-	
-	// T needs to implement sthing which will transform a tag to a
-	// object type
-	eObjectType getType()
-	{
-		return T::getType(tag);
-	}
-	
-	// Container needs to be sanely indexable
-	D& operator[](std::size_t i)
-	{
-		return values[i];		
-	}
-	
-	const D& operator[](std::size_t i) const
-	{
-		return values[i];		
-	}
-	
-	// container must have capacity
-	void resize(std::size_t s)
-	{
-		values.reserve(s);
-		values.resize(s);
-	}
-
-	// must be able to tell what that capacity is
-	std::size_t size() const
-	{
-		return values.size();
-	}
-
-};
 
 
 // Primitive unboxed values (this must be POD)
@@ -160,61 +114,90 @@ template <typename ActualT, typename CharT, typename FixnumT, typename FloatnumT
 {
 public:	
 	ActualT value;
+
+	TLispValue()
+	{
+	}
 	
 	// need to be ablue to convert between ActualType and these types
-	operator PtrT()
+	operator PtrT() const
 	{
-		// pure evil!
+		// convert it to a void * and construct a PtrT() around it
 		return PtrT(reinterpret_cast<void*>(value));
 	}
 
+	
 	// we can't overload by return type, so we use value conversion instead
-	operator FixnumT()
+	operator FixnumT() const
 	{
 		return value;
 	};
 	
-	operator FloatnumT()
+	operator FloatnumT() const
 	{
 		return *(static_cast<FloatnumT*>(&value));
 	}
 
-	operator CharT()
+	operator CharT() const
 	{
 		return *(static_cast<CharT*>(&value));
 	};
-	
-	operator PrimT()
+
+	operator PrimT() const
 	{
 		return *(static_cast<PrimT*>(&value));
 	}
 
-	// operator=, but then is this POD ?
-	TLispValue& operator=(PtrT ptr)
+	TLispValue(const PtrT& ptr)
+	{
+		value = reinterpret_cast<ActualT>(reinterpret_cast<void*>(ptr.get()));
+	}
+	
+	TLispValue& operator=(const PtrT& ptr)
 	{
 		value = reinterpret_cast<ActualT>(reinterpret_cast<void*>(ptr.get()));
 		return *this;
 	}
+
+	TLispValue(const FixnumT& fn)
+	{
+		value = fn;
+	}
 	
-	TLispValue& operator=(FixnumT fn)
+	TLispValue& operator=(const FixnumT& fn)
 	{
 		value = fn;
 		return *this;
 	}
+
+	TLispValue(const FloatnumT& fn)
+	{
+		(*static_cast<FloatnumT*>(&value))  = fn;		
+	}
 	
-	TLispValue& set(FloatnumT fn)
+	TLispValue& set(const FloatnumT& fn)
 	{
 		(*static_cast<FloatnumT*>(&value))  = fn;
 		return *this;
 	}
+
+	TLispValue(const CharT& ch)
+	{
+		(*static_cast<FloatnumT*>(&value))  = ch;		
+	}
 	
-	TLispValue& operator=(CharT ch)		
+	TLispValue& operator=(const CharT& ch)		
 	{
 		(*static_cast<CharT*>(&value))  = ch;
 		return *this;
 	}
+
+	TLispValue(const PrimT& prim)
+	{
+		(*static_cast<FloatnumT*>(&value))  = prim;		
+	}	
 	
-	TLispValue& operator=(PrimT prim)
+	TLispValue& operator=(const PrimT& prim)
 	{
 		(*static_cast<PrimT*>(&value))  = prim;
 		return *this;
@@ -244,6 +227,46 @@ public:
 typedef Tag<u8> LispTag;
 typedef TLispValue<u128, CharType, FixnumType, FloatnumType, PrimitiveType, PointerType> LispValue;
 
+
+// container of object data with a tag
+template <typename T, typename D, template <typename> class C>
+class TaggedObjData
+{
+public:	
+
+	typedef T TagType;
+	typedef D ValueType;
+	typedef C<D> ValueContainerType;
+
+	T tag;
+	ValueContainerType values;
+	
+	// T needs to implement sthing which will transform a tag to a
+	// object type
+	eObjectType getType()
+	{
+		return tag.getType(tag);
+	}
+
+	void setType(eObjectType type)
+	{
+		return tag.setType(type);
+	}
+	
+	// container must have capacity
+	void resize(std::size_t s)
+	{
+		values.reserve(s);
+		values.resize(s);
+	}
+
+	// must be able to tell what that capacity is
+	std::size_t size() const
+	{
+		return values.size();
+	}
+
+};
 
 // TO DO -- template template parameters?
 
