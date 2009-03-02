@@ -5,62 +5,57 @@ namespace Lisp
 {
 	class String;
 
-	class String : public Obj
+	class String : public LispObj
 	{
 	public:
-
-		typedef String* StringPtr;
-		typedef String& StringRef;
-		
-		String() : value_("")
-		{};
-
-		String( const String& other )
+		void make(const CharType *value)
 		{
-			if (this != &other)
-				value_ = other.value_;
+			int i = 0;
+			
+			object.setType(eStringObj);
+			
+			// calc length
+			while (*value != '\0')
+			{
+				++i;
+				++value;
+			}
+			
+			// insert the pigs (string manipulation will not be this things forte)
+			object.values.resize(i);
+			value = value - i;
+			i = 0;
+			while(*value != '\0')
+			{
+				object.values.push_back( LispValue( *value ) );
+				++i;
+				++value;
+			}
 		}
 
-		virtual eObjectType getObjectType() const
+		std::size_t length() const
 		{
-			return eStringObj;
-		}
-
-		virtual String* create(void) const
-		{
-			StringPtr result = new String();
-			return result;
-		}
-
-		virtual String* clone() const
-		{
-			StringPtr result = new String(*this);
-		}
-
-		void print(std::ostream& out) const
-		{
-			out << "\"" << value_ << "\"";
-		}
-
-		StringValue value()
-		{
-			return value_;
-		}
-
-		void value(StringValue value)
-		{
-			value_ = value;
+			return object.values.size();
 		}
 		
-		bool operator==(const Obj* other)
+		bool operator==(const String& str)
 		{
-			bool result = false;
-			if (other->getObjectType() == eStringObj)
-				result = ( value_ == dynamic_cast<const String*>(other)->value_ );
-			return result;
+			if (str.length() == length())
+			{
+				bool result = true;			
+				std::size_t i = 0;
+				
+				while ((i < length()) && result)
+				{
+					result = (
+						CharType(str.object.values[i]) ==
+						CharType(object.values[i]) );
+					i++;
+				}
+				return result;
+			}
+			return false;
 		}
-	private:
-		StringValue value_;
 	};
 }
 

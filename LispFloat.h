@@ -4,55 +4,20 @@
 namespace Lisp
 {	
 
-	class Floatnum : public Obj
+	struct Floatnum : public LispObj
 	{
-	public:
-
-		typedef Floatnum* FloatnumPtr;
-		typedef Floatnum& FloatnumRef;			
-
-		Floatnum() : value_(0.0)
-		{};
-			
-		Floatnum(const Floatnum& other)
+		void make(FloatnumType v)
 		{
-			if (this != &other)
-				value_ = other.value_;
-		};
-		
-		virtual eObjectType getObjectType() const
-		{
-			return eFloatnumObj;
+			object.tag.setType(eFloatnumObj);
+			object.values.resize(1);
+			object.values[0] = LispValue(v);
 		}
 
-		virtual Floatnum* create(void) const
+		FloatnumType value()
 		{
-			Floatnum *result = new Floatnum();
-			return result;
+			return object.values[0];
 		}
-
-		virtual Floatnum* clone() const
-		{
-			Floatnum* result = new Floatnum(*this);
-			return result;
-		}
-					   							
-		void print(std::ostream& out) const
-		{
-			out << value_;
-		}
-
-		bool operator==(const Obj* other)
-		{
-			bool result = false;
-			if (other->getObjectType() == eFloatnumObj)
-				result = ( value_ == dynamic_cast<const Floatnum *>(other)->value_ );			
-			return result;
-		}
-		
-	private:
-		FloatnumValue value_;
-			
+				
 	};
 	
 }

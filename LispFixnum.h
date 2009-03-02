@@ -4,21 +4,22 @@
 
 namespace Lisp
 {
-struct Fixnum : public struct LispObj
-{
-	void make(FixnumType v)
+
+	struct Fixnum : public LispObj
 	{
-		setType(eFixnumObj);
-		object.resize(1);
-		object[0] = v;
-	}
-
-	FixnumType value() {
-		return object[0];
-	}
-};
+		void make(FixnumType v)
+		{
+			object.tag.setType(eFixnumObj);
+			object.values.resize(1);
+			object.values[0] = LispValue(v);
+		}
+		
+		FixnumType value()
+		{
+			return object.values[0];
+		}
+	};
 			
-
 }
 
 #endif

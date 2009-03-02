@@ -135,12 +135,12 @@ public:
 	
 	operator FloatnumT() const
 	{
-		return *(static_cast<FloatnumT*>(&value));
+		return *(reinterpret_cast<const FloatnumT*>(&value));
 	}
 
 	operator CharT() const
 	{
-		return *(static_cast<CharT*>(&value));
+		return *(reinterpret_cast<const CharT*>(&value));
 	};
 
 	operator PrimT() const
@@ -172,23 +172,23 @@ public:
 
 	TLispValue(const FloatnumT& fn)
 	{
-		(*static_cast<FloatnumT*>(&value))  = fn;		
+		(*reinterpret_cast<FloatnumT*>(&value))  = fn;		
 	}
 	
 	TLispValue& set(const FloatnumT& fn)
 	{
-		(*static_cast<FloatnumT*>(&value))  = fn;
+		(*reinterpret_cast<FloatnumT*>(&value))  = fn;
 		return *this;
 	}
 
 	TLispValue(const CharT& ch)
 	{
-		(*static_cast<FloatnumT*>(&value))  = ch;		
+		(*reinterpret_cast<CharT*>(&value))  = ch;		
 	}
 	
 	TLispValue& operator=(const CharT& ch)		
 	{
-		(*static_cast<CharT*>(&value))  = ch;
+		(*reinterpret_cast<CharT*>(&value))  = ch;
 		return *this;
 	}
 
