@@ -1,2 +1,3 @@
 env = Environment(tools=["mingw"])
+print env['PATH']
 env.Program("lispp", [ "Main.cpp", "LispNil.cpp", "LispFixNum.cpp", "LispFloat.cpp", "LispString.cpp", "LispCons.cpp", "LispSymbol.cpp" ])
