@@ -5,282 +5,255 @@
 #include <cassert>
 #include <ostream>
 #include <vector>
+#include <map>
 #include <string>
 #include <algorithm>
+#include <boost/variant.hpp>
+#include <boost/tr1/memory.hpp>
 
 namespace Lisp
 {
-	
 
+	typedef signed char s8;
+	typedef signed short s16;
+	typedef signed int s32;
+	typedef signed long s64;
+	typedef signed long long s128;
 
-enum eObjectType
-{
-	eBaseObj  = 0,
-	eNullObj,
-	eStringObj,
-	eConsObj,
-	eFixnumObj,
-	eFloatnumObj,
-	eSymbolObj,
-	ePackageObj,
-	eFunctionObj
-};
+	typedef unsigned char u8;
+	typedef unsigned short u16;
+	typedef unsigned int u32;
+	typedef unsigned long u64;
+	typedef unsigned long long u128;
 
-
-typedef signed char s8;
-typedef signed short s16;
-typedef signed int s32;
-typedef signed long s64;
-typedef signed long long s128;
-
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef unsigned long u64;
-typedef unsigned long long u128;
-
-typedef float f32;
-typedef double f64;
-
-typedef u8 CharType;
-typedef u32 FixnumType;
-typedef f32 FloatnumType;
-
-
-struct LispObj;
-
-// smart pointer for pointing at lisp objects
-template <typename T> class ObjPtr
-{
-public:	
-	typedef T* ActualPtrType;
-	explicit ObjPtr( T* o ) : p_(o) {};
-//	~ObjPtr( ) { delete p_; }
-	T* operator->() { return get(); };
-	T& operator*() { return *get(); };
-
-	template <typename D>
-	operator ObjPtr<D>()
-	{
-		return ObjPtr<D>(p_);
-	}
-	
-private:
-	explicit ObjPtr( void* o ) : p_(static_cast<T*>(o)) {};
-	
-	T* get() const
-	{
-		return p_;
-	}
-	
-	void set(const void *p)
-	{
-		p_ = reinterpret_cast<T*>(p);
-	}
-
-	T* p_;
-
-	template <typename ActualT, typename CharT, typename FixnumT, typename FloatnumT, typename PrimType, typename PtrType>
-	friend class TLispValue;
-};
-
-// this is what we use to point at a lisp object
-typedef ObjPtr<LispObj> PointerType;
-
-
-// straight primitive call with no environment / args
-template <typename ArgPointer, template <typename> class ArgContainer>
-class PrimitiveT
-{
-public:
-    // err..what does a smart pointer to a pointer look like?
-	typedef PointerType (*PrimitivePtr)(ArgContainer<ArgPointer>& args);
-	
-	explicit PrimitiveT(PrimitivePtr f) : fn_(f) {}
-	PointerType operator()(ArgContainer<ArgPointer>& p)
- 	{
- 		return fn_(p);
- 	}
- private:
- 	PrimitivePtr fn_;
-};
-
-typedef PrimitiveT< ObjPtr<LispObj>, std::vector > PrimitiveType;
+	typedef float f32;
+	typedef double f64;
 
 
 
-// Primitive unboxed values (this must be POD)
-template <typename ActualT, typename CharT, typename FixnumT, typename FloatnumT, typename PrimT, typename PtrT> class TLispValue
-{
-public:	
-	ActualT value;
+// placeholder type
+	struct NullType {
+	private:
+		const u32 dead_;
+	public:
+		NullType() : dead_(0xDEADBEEF)
+		{
 
-	TLispValue()
-	{
-	}
-	
-	// need to be ablue to convert between ActualType and these types
-	operator PtrT() const
-	{
-		// convert it to a void * and construct a PtrT() around it
-		return PtrT(reinterpret_cast<void*>(value));
-	}
-
-	
-	// we can't overload by return type, so we use value conversion instead
-	operator FixnumT() const
-	{
-		return value;
-	};
-	
-	operator FloatnumT() const
-	{
-		return *(reinterpret_cast<const FloatnumT*>(&value));
-	}
-
-	operator CharT() const
-	{
-		return *(reinterpret_cast<const CharT*>(&value));
+		}
 	};
 
-	operator PrimT() const
-	{
-		return *(static_cast<PrimT*>(&value));
-	}
-
-	TLispValue(const PtrT& ptr)
-	{
-		value = reinterpret_cast<ActualT>(reinterpret_cast<void*>(ptr.get()));
-	}
 	
-	TLispValue& operator=(const PtrT& ptr)
+	template <typename T> class TUnboxedType
 	{
-		value = reinterpret_cast<ActualT>(reinterpret_cast<void*>(ptr.get()));
-		return *this;
-	}
+	private:
+		T data_;
+	public:
+		TUnboxedType() {
 
-	TLispValue(const FixnumT& fn)
+		}
+
+		TUnboxedType(const TUnboxedType<T>& other) : data_(other.data_)
+		{
+
+		}
+
+		T& operator=(const TUnboxedType<T>& other)
+		{
+			data_ = other.data_;
+		}
+
+		operator T()
+		{
+			return data_;
+		}
+
+		const bool isBoxed() const
+		{
+			return false;
+		}
+	};
+
+	class CharType : public TUnboxedType<u8>
 	{
-		value = fn;
-	}
-	
-	TLispValue& operator=(const FixnumT& fn)
+
+	};
+
+	class FixnumType : public TUnboxedType<u32>
 	{
-		value = fn;
-		return *this;
-	}
+	};
 
-	TLispValue(const FloatnumT& fn)
+	class FloatnumType : public TUnboxedType<f32>
 	{
-		(*reinterpret_cast<FloatnumT*>(&value))  = fn;		
-	}
-	
-	TLispValue& set(const FloatnumT& fn)
+	};
+
+	template <typename T> class TBoxedType
 	{
-		(*reinterpret_cast<FloatnumT*>(&value))  = fn;
-		return *this;
-	}
+	private:
+		boost::shared_ptr<T> pointer_;
+	public:
+		TBoxedType() : pointer_(new T)
+		{
+		}
 
-	TLispValue(const CharT& ch)
+		TBoxedType(const TUnboxedType<T>& other) : pointer_(other.pointer_)
+		{
+		}
+
+		T& operator=(const TBoxedType<T>& other)
+		{
+			pointer_ = other.pointer_;
+		}
+
+		T* operator->()
+		{
+			return pointer_.operator->();
+		}
+
+		T& operator*()
+		{
+			return pointer_.operator*();
+		}
+
+		const bool isBoxed() const
+		{
+			return true;
+		}
+
+	};
+
+// Simple unboxable Lisp Value
+	template <typename CharT,  typename FixnumT,  typename FloatnumT,  typename PrimT,  typename ObjRefT> class TLispValue
 	{
-		(*reinterpret_cast<CharT*>(&value))  = ch;		
-	}
-	
-	TLispValue& operator=(const CharT& ch)		
+	public:
+		typedef CharT LispCharT;
+		typedef FixnumT LispFixnumT;
+		typedef FloatnumT LispFloatnumT;
+		typedef PrimT LispPrimT;
+		typedef ObjRefT LispObjRefT;
+
+		boost::variant<  CharT,  FixnumT,  FloatnumT,  PrimT,  ObjRefT>	value_;
+
+		CharT getChar() {
+			return boost::get< CharT>(value_);
+		}
+
+		FixnumT getFixnum() {
+			return boost::get< FixnumT>(value_);
+		}
+
+		FloatnumT getFloatNum() {
+			return boost::get< FloatnumT>(value_);
+		}
+
+		PrimT getPrim() {
+			return boost::get< PrimT>(value_);
+		}
+	};
+
+// instantiate lisp value
+	struct LispValue : public TLispValue<u8, u32, f32, NullType, boost::shared_ptr<void*> >
 	{
-		(*reinterpret_cast<CharT*>(&value))  = ch;
-		return *this;
-	}
+	};
 
-	TLispValue(const PrimT& prim)
+// Compound lisp object
+	template <typename ListT, typename MapT, typename ArrayT> class TLispObj
+		: public boost::variant<ListT, MapT, ArrayT>
 	{
-		(*static_cast<FloatnumT*>(&value))  = prim;		
-	}	
-	
-	TLispValue& operator=(const PrimT& prim)
+	public:
+		const bool isCompound() const {
+			return true;
+		}
+	};
+
+
+	struct LispObject : public TLispObj<std::list<LispValue>, std::map<std::string, LispValue>, std::vector<LispValue> >
 	{
-		(*static_cast<PrimT*>(&value))  = prim;
-		return *this;
-	}
-	
-};
 
+	};
 
-// tag types (this doesn't have to be POD, but its advisable)
-template <typename T> class Tag
-{
-private:	
-	T tagValue;
-
-public:	
-	void setType(eObjectType tag)
+	class IsRefCompoundVisitor : public boost::static_visitor<>
 	{
-		tagValue = static_cast<eObjectType>(tagValue);
-	}
-	
-	eObjectType getType()
+		bool isCompound_;
+
+		template <typename T>
+		void operator()(T& operand)
+		{
+			isCompound_ = operand->isCompound();
+		}
+	};
+
+
+// reference to a lisp object: can either contain the value itself or a pointer to a compound value
+	template <typename LispValueT, typename LispObjT> class LispObjRefT : 	public boost::variant< LispValueT, boost::shared_ptr<LispObjT> >
 	{
-		static_cast<eObjectType>(tagValue);
-	}
-};
+	public:
 
-typedef Tag<u8> LispTag;
-typedef TLispValue<u128, CharType, FixnumType, FloatnumType, PrimitiveType, PointerType> LispValue;
+		const bool isCompoundRef() const {
+			IsRefCompoundVisitor visitor;
+			boost::apply_visitor(this);
+			return visitor.isCompound_;
+		}
+	};
 
-
-// container of object data with a tag
-template <typename T, typename D, template <typename> class C>
-class TaggedObjData
-{
-public:	
-
-	typedef T TagType;
-	typedef D ValueType;
-	typedef C<D> ValueContainerType;
-
-	T tag;
-	ValueContainerType values;
-	
-	// T needs to implement sthing which will transform a tag to a
-	// object type
-	eObjectType getType()
+	class LispObjRef : public LispObjRefT< LispValue, LispObject >
 	{
-		return tag.getType(tag);
-	}
 
-	void setType(eObjectType type)
+	};
+
+
+
+// This is our container primitive, the equivalent of a cons cell structured list
+	template <typename D, template <typename> class C>
+	class TLispObjContainer
 	{
-		return tag.setType(type);
-	}
-	
-	// container must have capacity
-	void resize(std::size_t s)
-	{
-		values.reserve(s);
-		values.resize(s);
-	}
+	public:
 
-	// must be able to tell what that capacity is
-	std::size_t size() const
-	{
-		return values.size();
-	}
+		typedef D ValueType;  
+		typedef C<D> ValueContainerType;
 
-};
+		typename D::LispCharT getChar(std::size_t i)
+		{
+			return values[i].getChar();
+		}
 
-// TO DO -- template template parameters?
+		typename D::LispFixnumT getFixnum(std::size_t i)
+		{
+			return values[i].getFixnum();
+		}
 
-struct LispObj {
-	TaggedObjData<Tag<unsigned char>, LispValue, std::vector>  object;
-};
+		typename D::LispFloatnumT getFloatNum(std::size_t i)
+		{
+			return values[i].getFloatNum();
+		}
 
+		typename D::LispObjRefT getObjRef(std::size_t i)
+		{
+			return values[i].getObjRef();
+		}
 
+		ValueContainerType values;
 
+		// container must have capacity
+		void resize(std::size_t s)
+		{
+			values.reserve(s);
+			values.resize(s);
+		}
 
+		// must be able to tell what that capacity is
+		std::size_t size() const
+		{
+			return values.size();
+		}
 
+	};
+
+	struct LispObjContainer {
+		TLispObjContainer<LispValue, std::vector>  objects;
+	};
 
 } // end namespace lisp
-	
+
 
 #endif
 

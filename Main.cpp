@@ -7,7 +7,7 @@
 #include <cassert>
 
 #include "LispObj.h"
-#include "LispNil.h"
+//#include "LispNil.h"
 
 using namespace Lisp;
 
