@@ -1,6 +1,8 @@
 
-env = Environment(tools=["mingw"])
-#env.Append(CXXFLAGS="/EHsc")
-env.Append(CPPPATH = r"..\libraries\boost_1_39_0")
-env.Program("lispp", [ "Main.cpp" ]) # , "LispNil.cpp", "LispCons.cpp", "LispSymbol.cpp" ])
+vars = Variables('custom.py')
+vars.Add(PathVariable('BOOST', 'Path to boost', '/usr/include/boost'))
+env = Environment(variables=vars)
+#env.Append(CXXFLAGS=[ "-g", "-Od" ])
+env.Append(CPPPATH = [ env['BOOST'] ])
+env.Program("lispp", [ "Main.cpp", "LispObj.cpp", "LispReader.cpp" ]) # , "LispNil.cpp", "LispCons.cpp", "LispSymbol.cpp" ])
 
