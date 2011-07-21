@@ -7,7 +7,17 @@
 #include <string>
 
 #include "LispObj.h"
-#include "LispFixnum.h"
+#include "LispFixNum.h"
 
-using namespace Lisp;
+namespace Lisp {
+	LispObjRef make_fixnum(const u32 val)
+	{
+		return boost::shared_ptr<LispObj>(new LispObj(val));
+	}
+
+	bool is_fixnum(LispObjRef obj)
+	{
+		return (obj->which() == FIXNUM);
+	}	
+}
 

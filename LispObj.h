@@ -9,7 +9,7 @@
 #include <string>
 #include <algorithm>
 #include <boost/variant.hpp>
-#include <boost/tr1/memory.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace Lisp {
 
@@ -31,12 +31,10 @@ namespace Lisp {
 	// forward declaration
 	class LispObj;
 
-	class LispObjRef : public boost::shared_ptr<LispObj> {
-		
-	};
+	typedef boost::shared_ptr<LispObj> LispObjRef;
 
     // placeholder type
-	struct NullType {
+	class NullType {
 	private:
 		const u32 dead_;
 	public:
@@ -51,12 +49,20 @@ namespace Lisp {
 	public:
 		TUnboxedType() {
 		}
+		
+		TUnboxedType(const T& other) : data_(other) {
+		}
+
+		T& operator=(const T& other) {
+			data_ = other;
+		}
 
 		TUnboxedType(const TUnboxedType<T>& other) : data_(other.data_) {
 		}
 
-		T& operator=(const TUnboxedType<T>& other) {
+		T& operator=(const TUnboxedType<T>& other) {			
 			data_ = other.data_;
+			return *this;
 		}
 
 		operator T() {
@@ -68,31 +74,78 @@ namespace Lisp {
 		}
 	};
 
-	/* byte */
-	class CharType : public TUnboxedType<u8> {
+	template <typename T> class TBoxedType {
+	private:
+
+		T data_;
+
+	public:
+		TBoxedType() {
+   		}
+
+		TBoxedType(const T& other) : data_(other) {				
+		}
+
+		TBoxedType(const TBoxedType<T>& other) : data_(other.data_) {
+		}
+
+		T& operator=(const TBoxedType<T>& other) {
+			if (this != &other)
+				data_ = other.data_;
+			return *this;
+		}
+
+		const bool isBoxed() const {
+			return true;
+		}
+
 	};
+
+	class LispPrimitive 
+	{
+		LispObjRef operator()(LispObjRef args);
+	};
+		
+	/* byte */
+	typedef TUnboxedType<u8> CharType;
 
 	/* fixnum */
-	class FixnumType : public TUnboxedType<u32> {
-	};
+	typedef TUnboxedType<u32> FixnumType;
 
 	/* float */
-	class FloatnumType : public TUnboxedType<f32> {
-	};
-
+	typedef TUnboxedType<f32> FloatnumType;
 
 	/* string */
-	class StringType : public std::string {		
-	};
+	typedef TBoxedType< std::string  > StringType;
+
+	/* symbol */
+	typedef TBoxedType< std::pair< std::string, LispObjRef  > >  SymbolType;
 
 	/* cons cell */
-	class ConsType : public std::pair< LispObjRef, LispObjRef > {		
+	typedef TBoxedType< std::pair< LispObjRef, LispObjRef > >  ConsType;
+
+	/** primitive */
+	typedef  TBoxedType< LispPrimitive > PrimType;
+
+	enum LispObjectType {
+		NIL = 0,
+		CHAR,
+		FIXNUM,
+		FLOATNUM,
+		SYMBOL,
+		STRING,
+		CONS,
+		PRIM
 	};
 
-	/* template around a polymorphic simple unboxable Lisp Value */
-	class LispObj : public boost::variant< NullType, CharType, FixnumType, FloatnumType, StringType, ConsType > 
-	{
-		
+	
+	typedef  boost::variant< NullType, CharType, FixnumType, FloatnumType, SymbolType, StringType, ConsType, PrimType > LispObjBase;
+	
+	class LispObj : public LispObjBase {
+	public:
+		LispObj(const FixnumType& fnum) : LispObjBase(fnum) {
+			
+		}
 	};
 
 } // end namespace lisp
