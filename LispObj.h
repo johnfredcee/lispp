@@ -149,6 +149,9 @@ namespace Lisp {
 		LispObj(const FloatnumType& fnum) : LispObjBase(fnum) {
 			
 		}
+		LispObj(const CharType& fnum) : LispObjBase(fnum) {
+			
+		}
 	};
 
 } // end namespace lisp
