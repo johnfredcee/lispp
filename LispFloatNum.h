@@ -1,24 +1,11 @@
-#if !defined(H_LISPFLOAT)
-#define H_LISPFLOAT
+
+#ifndef LISP_FIXNUM_H_INCLUDED
+#define LISP_FIXNUM_H_INCLUDED
 
 namespace Lisp
-{	
-
-	struct Floatnum : public LispObj
-	{
-		void make(FloatnumType v)
-		{
-			object.tag.setType(eFloatnumObj);
-			object.values.resize(1);
-			object.values[0] = LispValue(v);
-		}
-
-		FloatnumType value()
-		{
-			return object.values[0];
-		}
-				
-	};
-	
+{
+	LispObjRef make_floatnum(float val);
+	bool       is_floatnum(LispObjRef obj); 
 }
+
 #endif

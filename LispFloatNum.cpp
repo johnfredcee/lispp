@@ -1,12 +1,25 @@
 
 #include <cassert>
 
-#include <string>
 #include <list>
 #include <vector>
 #include <iostream>
+#include <string>
 
 #include "LispObj.h"
-#include "LispFloat.h"
+#include "LispEnv.h"
+#include "LispFloatNum.h"
 
-using namespace Lisp;
+
+namespace Lisp {
+	LispObjRef make_floatnum(const float val)
+	{
+		return boost::shared_ptr<LispObj>(new LispObj(FloatnumType(val)));
+	}
+
+	bool is_floatnum(LispObjRef obj)
+	{
+		return (obj->which() == FLOATNUM);
+	}	
+}
+

@@ -12,7 +12,7 @@
 namespace Lisp {
 	LispObjRef make_fixnum(const u32 val)
 	{
-		return boost::shared_ptr<LispObj>(new LispObj(val));
+		return boost::shared_ptr<LispObj>(new LispObj(FixnumType(val)));
 	}
 
 	bool is_fixnum(LispObjRef obj)

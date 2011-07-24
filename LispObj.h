@@ -50,7 +50,7 @@ namespace Lisp {
 		TUnboxedType() {
 		}
 		
-		TUnboxedType(const T& other) : data_(other) {
+		explicit TUnboxedType(const T& other) : data_(other) {
 		}
 
 		T& operator=(const T& other) {
@@ -144,6 +144,9 @@ namespace Lisp {
 	class LispObj : public LispObjBase {
 	public:
 		LispObj(const FixnumType& fnum) : LispObjBase(fnum) {
+			
+		}
+		LispObj(const FloatnumType& fnum) : LispObjBase(fnum) {
 			
 		}
 	};
