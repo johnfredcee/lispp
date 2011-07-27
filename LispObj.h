@@ -143,13 +143,19 @@ namespace Lisp {
 	
 	class LispObj : public LispObjBase {
 	public:
+		LispObj() : LispObjBase() {
+			
+		}
 		LispObj(const FixnumType& fnum) : LispObjBase(fnum) {
 			
 		}
 		LispObj(const FloatnumType& fnum) : LispObjBase(fnum) {
 			
 		}
-		LispObj(const CharType& fnum) : LispObjBase(fnum) {
+		LispObj(const CharType& ch) : LispObjBase(ch) {
+			
+		}
+		LispObj(const ConsType& cons) : LispObjBase(cons) {
 			
 		}
 	};

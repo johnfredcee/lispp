@@ -3,8 +3,8 @@
 
 namespace Lisp
 {
-// the singulariy is here!
-extern LispObj nil;
+    // the singulariy is here!
+	extern LispObjRef nil;
 
 }
 
