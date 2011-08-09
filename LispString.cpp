@@ -8,3 +8,18 @@
 
 #include "LispObj.h"
 #include "LispString.h"
+
+namespace Lisp
+{
+	LispObjRef make_string(const char* string) 
+	{
+		std::string tempstr(string);
+		return boost::shared_ptr<LispObj>(new LispObj(StringType(tempstr)));
+	}
+	
+	bool is_string(LispObjRef obj) 
+	{
+		return (obj->which() == STRING);
+	}
+}
+

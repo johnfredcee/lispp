@@ -1,5 +1,7 @@
 
 #include <cctype>
+#include "LispNil.h"
+#include "LispFixNum.h"
 #include "LispReader.h"
 
 using namespace std;
@@ -11,13 +13,13 @@ namespace Lisp {
 
 	// TODO need to handle quoted double quotes
 	std::string Reader::readString() {
-		std::string result("\"");
+		std::string result;
 		char ic = input_.get();
 		while((input_.good()) && (ic != '\"')) {
 			result = result + ic;
 			ic = input_.get();
 		}
-		result = result + "\"";
+		result = result;
 		return result;
 	}
 
@@ -65,6 +67,15 @@ namespace Lisp {
 			tokenType_ = EOF;
 	}
 
+	LispObjRef Reader::read() {
+		nextToken();
+		if (tokenType_ == EOF) {
+			return nil;
+		}
+		if (tokenType_ == NUMBER) {
+			return make_fixnum(atoi(token_.c_str()));
+		}
+	}
 	Reader::~Reader() {
 	}
 }

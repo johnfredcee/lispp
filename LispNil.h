@@ -1,6 +1,8 @@
 #if !defined(H_LISPNIL)
 #define H_LISPNIL
 
+#include "LispObj.h"
+
 namespace Lisp
 {
     // the singulariy is here!

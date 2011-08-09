@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include "LispObj.h"
 
 namespace Lisp {
 	class Reader {
@@ -27,20 +28,16 @@ namespace Lisp {
 
 		void nextToken();
 
-		std::string token() {
-			return token_;
-		}
+		LispObjRef read();
 
-		TokenType tokenType() {
-			return tokenType_;
-		}
+		std::string  token_;
+
+		TokenType    tokenType_;
 
 	private:
 		std::istream& input_;
 		std::ostream& output_;
 		std::string  current_line_;
-		std::string  token_;
-		TokenType    tokenType_;
 	};
 
 }

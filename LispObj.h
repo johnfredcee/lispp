@@ -65,6 +65,7 @@ namespace Lisp {
 			return *this;
 		}
 
+		// unboxed types can be freely converted to C++ type
 		operator T() {
 			return data_;
 		}
@@ -83,7 +84,11 @@ namespace Lisp {
 		TBoxedType() {
    		}
 
-		TBoxedType(const T& other) : data_(other) {				
+		T& operator=(const T& other) {
+			data_ = other;
+		}
+
+		explicit TBoxedType(const T& other) : data_(other) {				
 		}
 
 		TBoxedType(const TBoxedType<T>& other) : data_(other.data_) {
@@ -155,7 +160,10 @@ namespace Lisp {
 		LispObj(const CharType& ch) : LispObjBase(ch) {
 			
 		}
-		LispObj(const ConsType& cons) : LispObjBase(cons) {
+		LispObj(const ConsType& cons) : LispObjBase(cons) {			
+		}
+
+		LispObj(const StringType& string) : LispObjBase(string) {
 			
 		}
 	};
