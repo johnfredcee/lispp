@@ -43,24 +43,24 @@ namespace Lisp {
 	};
 
 	/* This is a template for an unboxed type that can be represented by a simple scalar */
-	template <typename T> class TUnboxedType {
+	template <typename T> class TLispType {
 	private:
 		T data_;
 	public:
-		TUnboxedType() {
+		TLispType() {
 		}
 		
-		explicit TUnboxedType(const T& other) : data_(other) {
+		explicit TLispType(const T& other) : data_(other) {
 		}
 
 		T& operator=(const T& other) {
 			data_ = other;
 		}
 
-		TUnboxedType(const TUnboxedType<T>& other) : data_(other.data_) {
+		TLispType(const TLispType<T>& other) : data_(other.data_) {
 		}
 
-		T& operator=(const TUnboxedType<T>& other) {			
+		T& operator=(const TLispType<T>& other) {			
 			data_ = other.data_;
 			return *this;
 		}
@@ -70,67 +70,35 @@ namespace Lisp {
 			return data_;
 		}
 
-		const bool isBoxed() const {
-			return false;
-		}
-	};
-
-	template <typename T> class TBoxedType {
-	private:
-
-		T data_;
-
-	public:
-		TBoxedType() {
-   		}
-
-		T& operator=(const T& other) {
-			data_ = other;
-		}
-
-		explicit TBoxedType(const T& other) : data_(other) {				
-		}
-
-		TBoxedType(const TBoxedType<T>& other) : data_(other.data_) {
-		}
-
-		T& operator=(const TBoxedType<T>& other) {
-			if (this != &other)
-				data_ = other.data_;
-			return *this;
-		}
-
-		const bool isBoxed() const {
-			return true;
-		}
-
 	};
 
 	class LispPrimitive 
 	{
 		LispObjRef operator()(LispObjRef args);
 	};
-		
+
+	typedef std::pair< std::string, LispObjRef > LispSymbol;
+
 	/* byte */
-	typedef TUnboxedType<u8> CharType;
+	typedef TLispType<u8> CharType;
 
 	/* fixnum */
-	typedef TUnboxedType<u32> FixnumType;
+	typedef TLispType<u32> FixnumType;
 
 	/* float */
-	typedef TUnboxedType<f32> FloatnumType;
+	typedef TLispType<f32> FloatnumType;
 
 	/* string */
-	typedef TBoxedType< std::string  > StringType;
+	typedef TLispType< std::string  > StringType;
 
 	/* symbol */
-	typedef TBoxedType< std::pair< std::string, LispObjRef  > >  SymbolType;
+	typedef TLispType< LispSymbol >  SymbolType;
 
 	/* cons cell */
-	typedef TBoxedType< std::pair< LispObjRef, LispObjRef > >  ConsType;
+	typedef TLispType< std::pair< LispObjRef, LispObjRef > >  ConsType;
 
 	/** primitive */
-	typedef  TBoxedType< LispPrimitive > PrimType;
+	typedef  TLispType< LispPrimitive > PrimType;
 
 	enum LispObjectType {
 		NIL = 0,
@@ -164,6 +132,10 @@ namespace Lisp {
 		}
 
 		LispObj(const StringType& string) : LispObjBase(string) {
+			
+		}
+
+		LispObj(const SymbolType& symbol) : LispObjBase(symbol) {
 			
 		}
 	};
