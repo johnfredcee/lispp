@@ -8,7 +8,7 @@ using namespace std;
 
 
 namespace Lisp {
-	Reader::Reader(std::istream& input, std::ostream& output) : input_(input), output_(output),  tokenType_(UNKNOWN) {
+	Reader::Reader(std::istream& input) : input_(input),  tokenType_(UNKNOWN) {
 	}
 
 	// TODO need to handle quoted double quotes

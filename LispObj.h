@@ -83,7 +83,7 @@ namespace Lisp {
 	typedef TLispType<u8> CharType;
 
 	/* fixnum */
-	typedef TLispType<u32> FixnumType;
+	typedef TLispType<s32> FixnumType;
 
 	/* float */
 	typedef TLispType<f32> FloatnumType;

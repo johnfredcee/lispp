@@ -18,7 +18,7 @@ namespace Lisp {
 			EOF
 		};
 
-		Reader(std::istream& input, std::ostream& output);
+		Reader(std::istream& input);
 
 		virtual ~Reader();
 
@@ -36,7 +36,6 @@ namespace Lisp {
 
 	private:
 		std::istream& input_;
-		std::ostream& output_;
 		std::string  current_line_;
 	};
 
