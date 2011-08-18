@@ -1,10 +1,14 @@
 #ifndef LISPEVAL_H
 #define LISPEVAL_H
 
+#include "LispEnv.h"
+
 namespace Lisp {
+	class LispEnv;
+
 	class Eval {
 	public:		
-		LispObj operator()(LispObj& obj, LispEnv& env);
+		LispObjRef operator()(LispObjRef obj, LispEnvRef env);
 	};
 }
 #endif

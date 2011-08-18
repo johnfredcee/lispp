@@ -8,8 +8,10 @@
 namespace Lisp
 {
 	class Printer {
+	public:
 		Printer(std::ostream& output);
 		void print(LispObjRef obj);
+		void operator()(LispObjRef obj);
 	private:
 		std::ostream& output_;
 

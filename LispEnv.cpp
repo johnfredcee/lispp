@@ -1,17 +1,18 @@
 
 #include "LispObj.h"
 #include "LispEnv.h"
+#include "LispNil.h"
 
 using namespace std;
 
 namespace Lisp {
 
-	LispEnvRef LispEnv::globalEnv(new LispEnv);
+	LispEnvRef LispEnv::globalEnv = LispEnvRef(new LispEnv);
 
-	LispEnv::LispEnv() : parent_(boost::shared_ptr<LispEnv>()) {
+	LispEnv::LispEnv() : parent_(LispEnvRef()) {
 	}
 
-	LispEnv::LispEnv(boost::shared_ptr<LispEnv> parentEnv] : parent_(parentEnv) {		
+	LispEnv::LispEnv(LispEnvRef parentEnv) : parent_(parentEnv) {		
 	}
 	
 	LispObjRef LispEnv::ref(std::string var)  {
@@ -22,12 +23,11 @@ namespace Lisp {
 		if (parent_ != NULL) {
 			return parent_->ref(var);
 		} 
-		LispObjRef nil;
 		return nil;
 	}	
 
 	LispObjRef LispEnv::set(std::string var, LispObjRef ref) {
-		env[var] = ref;
+		env_[var] = ref;
 		return ref;
 	}
 	

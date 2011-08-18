@@ -36,5 +36,9 @@ namespace Lisp {
 		}
 		output_ << endl;
 	}
+
+	void Printer::operator()(LispObjRef obj) {
+		print(obj);
+	}
 }
 

@@ -15,7 +15,7 @@ namespace Lisp {
 			STRING,
 			RPAREN,
 			NUMBER,
-			EOF
+			TERMINAL
 		};
 
 		Reader(std::istream& input);
@@ -29,6 +29,9 @@ namespace Lisp {
 		void nextToken();
 
 		LispObjRef read();
+
+		LispObjRef operator()();
+
 
 		std::string  token_;
 

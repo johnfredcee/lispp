@@ -64,18 +64,23 @@ namespace Lisp {
 			}
 		}
 		if(tokenType_ == UNKNOWN)
-			tokenType_ = EOF;
+			tokenType_ = TERMINAL;
 	}
 
 	LispObjRef Reader::read() {
 		nextToken();
-		if (tokenType_ == EOF) {
+		if (tokenType_ == TERMINAL) {
 			return nil;
 		}
 		if (tokenType_ == NUMBER) {
 			return make_fixnum(atoi(token_.c_str()));
 		}
 	}
+
+	LispObjRef Reader::operator()() {
+		read();
+	}
+
 	Reader::~Reader() {
 	}
 }

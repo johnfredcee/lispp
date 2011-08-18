@@ -7,16 +7,25 @@
 #include <cassert>
 
 #include "LispObj.h"
-//#include "LispNil.h"
+#include "LispNil.h"
+#include "LispReader.h"
+#include "LispEval.h"
+#include "LispPrinter.h"
 
 using namespace Lisp;
 
-//Env* Env::root_environment = NULL;
-//Env* Env::current_environment = NULL;
 
 int main(int argc, char** argv)
 {
-	long long thing;
-	std::cout << sizeof(thing);
-//    Env root;
+	Lisp::Reader  read(std::cin);
+	Lisp::Eval    eval;
+	Lisp::Printer print(std::cout);
+
+	// REPL
+	while (1) {
+		LispObjRef obj = read();
+		LispObjRef eobj = eval(obj, LispEnv::globalEnv);
+		print(eobj);
+	}
+	exit(0);
 }
