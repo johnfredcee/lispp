@@ -4,7 +4,7 @@
 
 namespace Lisp
 {
-	LispObjRef make_floatnum(float val);
+	LispObjRef make_floatnum(CFloatnum val);
 	bool       is_floatnum(LispObjRef obj); 
 }
 

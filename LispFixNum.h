@@ -4,7 +4,7 @@
 
 namespace Lisp
 {
-	LispObjRef make_fixnum(u32 val);
+	LispObjRef make_fixnum(CFixnum val);
 	bool       is_fixnum(LispObjRef obj); 
 }
 

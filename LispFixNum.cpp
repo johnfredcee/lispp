@@ -10,7 +10,7 @@
 #include "LispFixNum.h"
 
 namespace Lisp {
-	LispObjRef make_fixnum(const u32 val)
+	LispObjRef make_fixnum(CFixnum val)
 	{
 		return boost::shared_ptr<LispObj>(new LispObj(FixnumType(val)));
 	}

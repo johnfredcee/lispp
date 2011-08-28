@@ -10,7 +10,7 @@
 #include "LispFixNum.h"
 
 namespace Lisp {
-	LispObjRef make_char(const u8 val)
+	LispObjRef make_char(CChar val)
 	{
 		return boost::shared_ptr<LispObj>(new LispObj(CharType(val)));
 	}
