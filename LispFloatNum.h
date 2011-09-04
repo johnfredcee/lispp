@@ -1,6 +1,6 @@
 
-#ifndef LISP_FIXNUM_H_INCLUDED
-#define LISP_FIXNUM_H_INCLUDED
+#ifndef LISP_FLOATNUM_H_INCLUDED
+#define LISP_FLOATNUM_H_INCLUDED
 
 namespace Lisp
 {

@@ -2,6 +2,8 @@
 #include <cctype>
 #include "LispNil.h"
 #include "LispFixNum.h"
+#include "LispString.h"
+#include "LispSymbol.h"
 #include "LispReader.h"
 
 using namespace std;
@@ -75,10 +77,17 @@ namespace Lisp {
 		if (tokenType_ == NUMBER) {
 			return make_fixnum(atoi(token_.c_str()));
 		}
+		if (tokenType_ == STRING) {
+			return make_string(token_.c_str());
+		}
+		if (tokenType_ == SYMBOL) {
+			return make_symbol(token_.c_str());
+		}
+
 	}
 
 	LispObjRef Reader::operator()() {
-		read();
+		return read();
 	}
 
 	Reader::~Reader() {
