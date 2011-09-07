@@ -3,12 +3,14 @@
 #include "LispNil.h"
 #include "LispFixNum.h"
 #include "LispReader.h"
+#include "LispCons.h"
+#include "LispSymbol.h"
 
 using namespace std;
 
 
 namespace Lisp {
-	Reader::Reader(std::istream& input) : input_(input),  tokenType_(UNKNOWN) {
+	Reader::Reader(std::istream& input) :  tokenType_(UNKNOWN), input_(input)  {
 	}
 
 	// TODO need to handle quoted double quotes
@@ -31,15 +33,13 @@ namespace Lisp {
 			result = result + ic;
 			if(isalpha(ic))
 				type = SYMBOL;
+			ic = input_.get();
 		}
 		return result;
 	}
 
 	void Reader::nextToken() {
 		char ic;
-		bool isNumeric = false;
-		bool isString  = false;
-		bool isSymbol  = false;
 		tokenType_ = UNKNOWN;
 		while((input_.good()) && (tokenType_ == UNKNOWN))  {
 			input_.get(ic);
@@ -74,11 +74,25 @@ namespace Lisp {
 		}
 		if (tokenType_ == NUMBER) {
 			return make_fixnum(atoi(token_.c_str()));
+		}		
+		if (tokenType_ == RPAREN) {
+			return nil;
 		}
+		if (tokenType_ == LPAREN) {
+			return make_cons(read(), read());
+		}
+		if (tokenType_ == SYMBOL) {
+			if (token_ == std::string("NIL")) {
+				return nil;
+			} else {
+				return make_symbol(token_.c_str());
+			}
+		}
+		return nil;
 	}
 
 	LispObjRef Reader::operator()() {
-		read();
+		return read();
 	}
 
 	Reader::~Reader() {
