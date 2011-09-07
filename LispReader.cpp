@@ -2,6 +2,8 @@
 #include <cctype>
 #include "LispNil.h"
 #include "LispFixNum.h"
+#include "LispString.h"
+#include "LispSymbol.h"
 #include "LispReader.h"
 #include "LispCons.h"
 #include "LispSymbol.h"
@@ -88,7 +90,12 @@ namespace Lisp {
 				return make_symbol(token_.c_str());
 			}
 		}
-		return nil;
+		if (tokenType_ == STRING) {
+			return make_string(token_.c_str());
+		}
+		if (tokenType_ == SYMBOL) {
+			return make_symbol(token_.c_str());
+		}
 	}
 
 	LispObjRef Reader::operator()() {
