@@ -7,6 +7,7 @@ namespace Lisp
 {
     // the singulariy is here!
 	extern LispObjRef nil;
+    extern bool is_nil(LispObjRef obj);
 
 }
 

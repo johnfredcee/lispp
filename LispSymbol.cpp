@@ -25,6 +25,7 @@ namespace Lisp {
 	{
 		SymbolType& symref = boost::get<SymbolType>(*sym);
 		static_cast<LispSymbol>(symref).second = rhs;
+		return static_cast<LispSymbol>(symref).second;
 	}
 
 	LispObjRef get_symbol_val(LispObjRef sym)

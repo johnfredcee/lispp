@@ -28,6 +28,12 @@ namespace Lisp {
 
 		void nextToken();
 
+		LispObjRef readToken();
+
+		LispObjRef read_the_rest();
+
+		LispObjRef read_list();
+
 		LispObjRef read();
 
 		LispObjRef operator()();
