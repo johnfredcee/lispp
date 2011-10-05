@@ -93,9 +93,7 @@ namespace Lisp {
 		if (tokenType_ == STRING) {
 			return make_string(token_.c_str());
 		}
-		if (tokenType_ == SYMBOL) {
-			return make_symbol(token_.c_str());
-		}
+		return nil;
 	}
 
 	LispObjRef Reader::operator()() {
