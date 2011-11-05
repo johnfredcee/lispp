@@ -34,13 +34,16 @@ std::string Reader::readNumberOrSymbol(TokenType& type) {
 	char ic = input_.get();
 	if (isalpha(ic))
 		type = SYMBOL;
-	while((input_.good()) & (!isspace(ic))) {
+	while((input_.good()) & (!isspace(ic)) && (ic!=')') && (ic!='(')) {
 		result = result + ic;
 		if ((type == FIXNUM) && (ic == '.')) {
 			type = FLOATNUM;
 		}
 		ic = input_.get();
 	}
+	// if it was lexically important, stick it back
+	if (!isspace(ic))
+		input_.putback(ic);
 	return result;
 }
 
@@ -54,7 +57,7 @@ void Reader::nextToken() {
 			token_ = std::string(")");
 			break;
 		}
-		if(ic == ')') {
+		if(ic == '(') {
 			tokenType_ = LPAREN;
 			token_ = std::string("(");
 			break;

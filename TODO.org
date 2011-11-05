@@ -1,6 +1,6 @@
 
 * Reader
-** TODO Distinguish beteween floats and ints
+** DONE Distinguish beteween floats and ints
 ** TODO Handle escaped quotes in strings
 ** TODO Handle chars
 
@@ -14,4 +14,7 @@
 ** DONE Eval strings
 ** DONE Eval symbol get
 ** TODO Eval symbol set
+** TODO Eval quote
 
+Bugs
+** TODO: Lists don't get echoed
