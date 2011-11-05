@@ -1,0 +1,16 @@
+
+* Reader
+** TODO Distinguish beteween floats and ints
+** TODO Handle escaped quotes in strings
+** TODO Handle chars
+
+* Types
+** TODO Make s32 fixnum type
+** DONE Add symbol type
+
+* Evaluation
+** TODO Create eval skel
+** TODO Eval ints
+** TODO Eval strings
+** TODO Eval symbol set
+** TODO Eval symbol get
