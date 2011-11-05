@@ -13,9 +13,13 @@
 ** DONE Eval ints
 ** DONE Eval strings
 ** TODO Eval quote
+*** TODO Add quote symbol main env
+*** TODO Process quote in reader
+*** TODO Process quote in eval
 ** DONE Eval symbol get
 ** TODO Eval symbol set
-
+** TODO Eval if form
+** TODO Eval primitive procedures
 
 Bugs
 ** DONE Lists don't get echoed
