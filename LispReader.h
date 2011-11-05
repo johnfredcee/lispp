@@ -14,7 +14,8 @@ namespace Lisp {
 			SYMBOL,
 			STRING,
 			RPAREN,
-			NUMBER,
+			FIXNUM,
+			FLOATNUM,
 			TERMINAL
 		};
 

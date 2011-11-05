@@ -5,12 +5,13 @@
 ** TODO Handle chars
 
 * Types
-** TODO Make s32 fixnum type
+** DONE Make s32 fixnum type
 ** DONE Add symbol type
 
 * Evaluation
-** TODO Create eval skel
-** TODO Eval ints
-** TODO Eval strings
+** DONE Create eval skel
+** DONE Eval ints
+** DONE Eval strings
+** DONE Eval symbol get
 ** TODO Eval symbol set
-** TODO Eval symbol get
+

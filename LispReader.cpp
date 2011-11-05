@@ -2,6 +2,7 @@
 #include <cctype>
 #include "LispNil.h"
 #include "LispFixNum.h"
+#include "LispFloatNum.h"
 #include "LispString.h"
 #include "LispSymbol.h"
 #include "LispReader.h"
@@ -29,12 +30,15 @@ std::string Reader::readString() {
 
 std::string Reader::readNumberOrSymbol(TokenType& type) {
 	std::string result;
-	type = NUMBER;
+	type = FIXNUM;
 	char ic = input_.get();
+	if (isalpha(ic))
+		type = SYMBOL;
 	while((input_.good()) & (!isspace(ic))) {
 		result = result + ic;
-		if(isalpha(ic))
-			type = SYMBOL;
+		if ((type == FIXNUM) && (ic == '.')) {
+			type = FLOATNUM;
+		}
 		ic = input_.get();
 	}
 	return result;
@@ -74,9 +78,12 @@ LispObjRef Reader::readToken() {
 	if (tokenType_ == TERMINAL) {
 		return nil;
 	}
-	if (tokenType_ == NUMBER) {
+	if (tokenType_ == FIXNUM) {
 		return make_fixnum(atoi(token_.c_str()));
 	}		
+	if (tokenType_ == FLOATNUM) {
+		return make_floatnum(atof(token_.c_str()));
+	}
 	if (tokenType_ == RPAREN) {
 		return nil;
 	}
