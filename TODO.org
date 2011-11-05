@@ -12,9 +12,10 @@
 ** DONE Create eval skel
 ** DONE Eval ints
 ** DONE Eval strings
+** TODO Eval quote
 ** DONE Eval symbol get
 ** TODO Eval symbol set
-** TODO Eval quote
+
 
 Bugs
-** TODO: Lists don't get echoed
+** DONE Lists don't get echoed

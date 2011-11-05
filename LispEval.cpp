@@ -23,9 +23,9 @@ namespace Lisp {
 		}
 		// cons cell
 		if (is_cons(obj)) {
-			// TODO: How to construct things? ;-)
+			return obj;
+			
 		}
-
 		return nil;
 		
 	};

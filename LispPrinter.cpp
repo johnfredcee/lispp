@@ -17,6 +17,15 @@ namespace Lisp {
 		
 	}
 
+	void Printer::print_cons(LispObjRef obj) {
+		print(car(obj));
+		LispObjRef next(cdr(obj));
+		if (!is_nil(next)) {
+			output_ << " ";
+			print_cons(next);					
+		}
+	}
+
 	void Printer::print(LispObjRef obj) {
 		if (is_nil(obj))
 			output_ << "NIL";
@@ -30,19 +39,16 @@ namespace Lisp {
 			output_ << static_cast<LispSymbol>(boost::get<SymbolType>(*obj)).first;
 		else if (is_cons(obj)) {
 			output_ << "(";
-			LispObjRef next(cdr(obj));
-			if (!is_nil(next))
-				print(next);
-			else
-				output_ << ")";			
+			print_cons(obj);
+			output_ << ")";			
 		}
 		else
 			output_ << "#UNPRINTABLE#";
-		output_ << endl;
 	}
 
 	void Printer::operator()(LispObjRef obj) {
 		print(obj);
+		output_ << endl;
 	}
 }
 

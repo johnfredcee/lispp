@@ -10,6 +10,7 @@ namespace Lisp
 	class Printer {
 	public:
 		Printer(std::ostream& output);
+		void print_cons(LispObjRef cons);
 		void print(LispObjRef obj);
 		void operator()(LispObjRef obj);
 	private:
@@ -17,5 +18,6 @@ namespace Lisp
 
 	};
 }
+
 
 #endif
