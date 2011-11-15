@@ -13,7 +13,7 @@ LispEnvRef LispEnv::globalEnv = LispEnvRef(new LispEnv);
 // constructor - new environment is constructed referring to
 // it's parent, normally, but this is for the global environment
 LispEnv::LispEnv() : parent_(LispEnvRef()) {
-	fEnv_["QUOTE"] = LispObjRef(static_cast<LispObj*>(new LispObj(PrimType(LispQuote::quote_fn)));
+	fEnv_["QUOTE"] = LispObjRef(static_cast<LispObj*>(new LispObj(PrimType(LispQuote::quote_fn))));
 }
 
 // constructor - new environment created with parent

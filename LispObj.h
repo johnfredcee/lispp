@@ -78,8 +78,8 @@ public:
 };
 
 /**
- * LispPrimitive function. We are using static jumps here rather 
- * than vtables for ease of binding reasons. 
+ * LispPrimitive is a pointer to a function that returns a reference to 
+ * a lisp obj and takes in a lisp obj. 
  */
 typedef LispObjRef (*CPrim)(LispObjRef args);
 
