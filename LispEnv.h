@@ -26,6 +26,12 @@ public:
 
 	/** Set a var in the environment */
 	LispObjRef set(std::string var, LispObjRef ref);	
+
+	/** fetch function in environment */
+	LispObjRef fref(std::string var);
+
+	/** Set a function in the environment */
+	LispObjRef fset(std::string var, LispObjRef ref);	
 		
 	/** Global environment */
 	static LispEnvRef globalEnv;

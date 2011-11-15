@@ -81,15 +81,7 @@ public:
  * LispPrimitive function. We are using static jumps here rather 
  * than vtables for ease of binding reasons. 
  */
-class LispPrimitive 
-{
-protected:
-	static LispObjRef (*fn_)(LispObjRef args);
-public:
-	LispObjRef operator()(LispObjRef args) {
-		return fn_(args);
-	};
-};
+typedef LispObjRef (*CPrim)(LispObjRef args);
 
 typedef std::pair< std::string, LispObjRef > LispSymbol;
 
@@ -113,7 +105,7 @@ typedef std::pair< LispObjRef, LispObjRef > CCons;
 typedef TLispType< CCons >  ConsType;
 
 /** primitive */
-typedef	 TLispType< LispPrimitive > PrimType;
+typedef	 TLispType< CPrim > PrimType;
 
 enum LispObjectType {
 	NIL = 0,
@@ -146,12 +138,14 @@ public:
 	LispObj(const ConsType& cons) : LispObjBase(cons) {			
 	}
 
-	LispObj(const StringType& string) : LispObjBase(string) {
-			
+	LispObj(const StringType& string) : LispObjBase(string) {			
 	}
 
-	LispObj(const SymbolType& symbol) : LispObjBase(symbol) {
-			
+	LispObj(const SymbolType& symbol) : LispObjBase(symbol) {		   
+	}
+
+	LispObj(const PrimType& primitive) : LispObjBase(primitive) {
+		
 	}
 };
 
