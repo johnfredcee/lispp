@@ -77,9 +77,18 @@ public:
 
 };
 
+/**
+ * LispPrimitive function. We are using static jumps here rather 
+ * than vtables for ease of binding reasons. 
+ */
 class LispPrimitive 
 {
-	LispObjRef operator()(LispObjRef args);
+protected:
+	static LispObjRef (*fn_)(LispObjRef args);
+public:
+	LispObjRef operator()(LispObjRef args) {
+		return fn_(args);
+	};
 };
 
 typedef std::pair< std::string, LispObjRef > LispSymbol;

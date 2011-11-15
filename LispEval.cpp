@@ -23,8 +23,8 @@ namespace Lisp {
 		}
 		// cons cell
 		if (is_cons(obj)) {
+			// test for quote here
 			return obj;
-			
 		}
 		return nil;
 		
