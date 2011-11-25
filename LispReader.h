@@ -27,6 +27,8 @@ namespace Lisp {
 		
 		std::string readNumberOrSymbol(TokenType& type);
 
+		std::string readQuote(TokenType& type);
+
 		void nextToken();
 
 		LispObjRef readToken();

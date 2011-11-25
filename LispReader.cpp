@@ -47,6 +47,12 @@ std::string Reader::readNumberOrSymbol(TokenType& type) {
 	return result;
 }
 
+std::string Reader::readQuote(TokenType& type) {
+	std::string result = "QUOTE";
+	type = SYMBOL;
+	return result;
+}
+
 void Reader::nextToken() {
 	char ic;
 	tokenType_ = UNKNOWN;
@@ -67,6 +73,10 @@ void Reader::nextToken() {
 			tokenType_ = STRING;
 			break;
 		}
+		if(ic == '\'') {
+			token_ = readQuote(tokenType_);
+			break;
+		}			
 		if(isalnum(ic)) {
 			input_.putback(ic);
 			token_ = readNumberOrSymbol(tokenType_);
