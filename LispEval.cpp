@@ -8,6 +8,7 @@
 #include "LispFloatNum.h"
 #include "LispString.h"
 #include "LispSymbol.h"
+#include "LispPrimitive.h"
 #include "LispEval.h"
 
 namespace Lisp {
@@ -29,9 +30,10 @@ namespace Lisp {
 			LispObjRef fnsym(car(obj));
 			LispObjRef fn = env->fref(((LispSymbol)(boost::get<SymbolType>(*fnsym))).first);
 			if (is_primitive(fn)) {
-				return ((LispPrimitive)(*fn))(car(obj));
+				CPrim cfn = (CPrim)(boost::get<PrimType>(*fn));
+				return cfn((*this)(cdr(obj), env));
 			} else {
-				return make_cons((*this)(car(obj)), (*this)(cdr(obj)));
+				return make_cons((*this)(car(obj)), (*this)(cdr(obj), env));
 			}
 		}
 		return nil;		
