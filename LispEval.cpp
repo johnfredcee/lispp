@@ -14,19 +14,26 @@ namespace Lisp {
 
 	LispObjRef Eval::operator()(LispObjRef obj, LispEnvRef env = LispEnv::globalEnv) {
 
+		// trivial case :-)
+		if (is_nil(obj))
+			return nil;
 		// constant literal (TODO: shoukd be using is<type> predicates)
 		if (is_char(obj) ||	is_fixnum(obj) || is_floatnum(obj)  || is_string(obj))
 			return obj;
 		// symbol lookup
 		if (is_symbol(obj)) {
-			return env->ref( ((LispSymbol)(boost::get<SymbolType>(*obj))).first) ;
+			return env->ref(((LispSymbol)(boost::get<SymbolType>(*obj))).first);
 		}
 		// cons cell
 		if (is_cons(obj)) {
-			// test for quote here
-			return obj;
+			LispObjRef fnsym(car(obj));
+			LispObjRef fn = env->fref(((LispSymbol)(boost::get<SymbolType>(*fnsym))).first);
+			if (is_primitive(fn)) {
+				return ((LispPrimitive)(*fn))(car(obj));
+			} else {
+				return make_cons((*this)(car(obj)), (*this)(cdr(obj)));
+			}
 		}
-		return nil;
-		
+		return nil;		
 	};
 }
