@@ -16,15 +16,60 @@ namespace Lisp {
 Reader::Reader(std::istream& input) :  tokenType_(UNKNOWN), input_(input)  {
 }
 
-// TODO need to handle quoted double quotes
 std::string Reader::readString() {
 	std::string result;
 	char ic = input_.get();
-	while((input_.good()) && (ic != '\"')) {
-		result = result + ic;
+	while ((input_.good()) && (ic != '\"')) 
+	{
+		if (ic != '\\') 
+		{
+			result = result + ic;			
+		}
+		else 
+		{
+			ic = input_.get();
+			result = result + ic;
+		}
 		ic = input_.get();
 	}
 	result = result;
+	return result;
+}
+
+char hexval(char c) 
+{
+	if ((c >= '0') && (c <= '9'))
+		return c - '0';
+	if ((c >= 'A') && (c <= 'F'))
+		return c - 'A';
+	if ((c >= 'a') && (c <= 'f'))
+		return c - 'a';
+	return 0;
+ }
+
+// char literals 
+// either #\c - literal char c
+// or     #8F - hex code 8F
+std::string Reader::readChar()
+{
+
+	std::string result;
+	
+	char ic = input_.get();
+	if (!input_.good())
+		result = "";
+	else {
+		if (ic == '\\')
+			result += input_.get();
+		else {
+			char val = hexval(ic) * 16;
+			ic = input_.get();
+			if (input_.good()) {
+				val += hexval(ic);
+			}			
+			result += val;
+		}
+	}
 	return result;
 }
 
@@ -73,6 +118,11 @@ void Reader::nextToken() {
 			tokenType_ = STRING;
 			break;
 		}
+		if(ic == '#') {
+			token_ = readChar();
+			tokenType_ = CHAR;
+		}
+			
 		if(ic == '\'') {
 			token_ = readQuote(tokenType_);
 			break;

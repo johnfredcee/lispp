@@ -13,6 +13,7 @@ namespace Lisp {
 			LPAREN,
 			SYMBOL,
 			STRING,
+			CHAR,
 			RPAREN,
 			FIXNUM,
 			FLOATNUM,
@@ -24,7 +25,9 @@ namespace Lisp {
 		virtual ~Reader();
 
 		std::string readString();
-		
+
+		std::string readChar();
+
 		std::string readNumberOrSymbol(TokenType& type);
 
 		std::string readQuote(TokenType& type);
