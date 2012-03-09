@@ -1,7 +1,8 @@
 
+
 * Reader
 ** DONE Distinguish beteween floats and ints
-** TODO Handle escaped quotes in strings
+** DONE Handle escaped quotes in strings
 ** TODO Handle chars
 
 * Types
