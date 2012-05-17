@@ -7,12 +7,12 @@
 #include "LispObj.h"
 
 namespace Lisp {
-class LispEnv;
+  class LispEnv;
 
-typedef boost::shared_ptr<LispEnv> LispEnvRef;
+  typedef boost::shared_ptr<LispEnv> LispEnvRef;
 
-class LispEnv {
-public:
+  class LispEnv {
+  public:
 	typedef boost::unordered_map<std::string, LispObjRef> EnvironmentT;
 
 	/** construct root environment */
@@ -32,11 +32,14 @@ public:
 
 	/** Set a function in the environment */
 	LispObjRef fset(std::string var, LispObjRef ref);	
-		
+
+	/** Set function primitive */
+	static LispObjRef set_fn(LispObjRef cons, LispEnvRef env);
+
 	/** Global environment */
 	static LispEnvRef globalEnv;
 
-private:
+  private:
 		
 	/** Our environemnt. */
 	EnvironmentT env_;
@@ -46,7 +49,7 @@ private:
 
 	/** Pointer back up to parent environment */
 	LispEnvRef parent_;
-};	
+  };	
 
 }
 #endif

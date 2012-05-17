@@ -13,45 +13,49 @@
 
 namespace Lisp {
 
-typedef signed char s8;
-typedef signed short s16;
-typedef signed int s32;
-typedef signed long s64;
-typedef signed long long s128;
+  class LispEnv;
 
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef unsigned long u64;
-typedef unsigned long long u128;
+  typedef boost::shared_ptr<LispEnv> LispEnvRef;
 
-typedef float f32;
-typedef double f64;
+  typedef signed char s8;
+  typedef signed short s16;
+  typedef signed int s32;
+  typedef signed long s64;
+  typedef signed long long s128;
 
-// forward declaration
-class LispObj;
+  typedef unsigned char u8;
+  typedef unsigned short u16;
+  typedef unsigned int u32;
+  typedef unsigned long u64;
+  typedef unsigned long long u128;
 
-typedef boost::shared_ptr<LispObj> LispObjRef;
+  typedef float f32;
+  typedef double f64;
 
-typedef s32 CFixnum;
-typedef u8  CChar;
-typedef std::string CString;
-typedef f32 CFloatnum; 
+  // forward declaration
+  class LispObj;
 
-// placeholder type
-class NullType {
-private:
+  typedef boost::shared_ptr<LispObj> LispObjRef;
+
+  typedef s32 CFixnum;
+  typedef u8  CChar;
+  typedef std::string CString;
+  typedef f32 CFloatnum; 
+
+  // placeholder type
+  class NullType {
+  private:
 	const u32 dead_;
-public:
+  public:
 	NullType() : dead_(0xDEADBEEF) {
 	}
-};
+  };
 
-/* This is a template for an unboxed type that can be represented by a simple scalar */
-template <typename T> class TLispType {
-private:
+  /* This is a template for an unboxed type that can be represented by a simple scalar */
+  template <typename T> class TLispType {
+  private:
 	T data_;
-public:
+  public:
 	TLispType() {
 	}
 		
@@ -59,55 +63,55 @@ public:
 	}
 
 	T& operator=(const T& other) {
-		data_ = other;
+	  data_ = other;
 	}
 
 	TLispType(const TLispType<T>& other) : data_(other.data_) {
 	}
 
 	T& operator=(const TLispType<T>& other) {			
-		data_ = other.data_;
-		return *this;
+	  data_ = other.data_;
+	  return *this;
 	}
 
 	// unboxed types can be freely converted to C++ type
 	operator T() {
-		return data_;
+	  return data_;
 	}
 
-};
+  };
 
-/**
- * LispPrimitive is a pointer to a function that returns a reference to 
- * a lisp obj and takes in a lisp obj. 
- */
-typedef LispObjRef (*CPrim)(LispObjRef args);
+  /**
+   * LispPrimitive is a pointer to a function that returns a reference to 
+   * a lisp obj and takes in a lisp obj. 
+   */
+  typedef LispObjRef (*CPrim)(LispObjRef args, LispEnvRef env);
 
-typedef std::pair< std::string, LispObjRef > LispSymbol;
+  typedef std::pair< std::string, LispObjRef > LispSymbol;
 
-/* byte */
-typedef TLispType<CChar> CharType;
+  /* byte */
+  typedef TLispType<CChar> CharType;
 
-/* fixnum */
-typedef TLispType<CFixnum> FixnumType;
+  /* fixnum */
+  typedef TLispType<CFixnum> FixnumType;
 
-/* float */
-typedef TLispType<CFloatnum> FloatnumType;
+  /* float */
+  typedef TLispType<CFloatnum> FloatnumType;
 
-/* string */
-typedef TLispType< CString	> StringType;
+  /* string */
+  typedef TLispType< CString	> StringType;
 
-/* symbol */
-typedef TLispType< LispSymbol >	 SymbolType;
+  /* symbol */
+  typedef TLispType< LispSymbol >	 SymbolType;
 
-/* cons cell */
-typedef std::pair< LispObjRef, LispObjRef > CCons;
-typedef TLispType< CCons >  ConsType;
+  /* cons cell */
+  typedef std::pair< LispObjRef, LispObjRef > CCons;
+  typedef TLispType< CCons >  ConsType;
 
-/** primitive */
-typedef	 TLispType< CPrim > PrimType;
+  /** primitive */
+  typedef	 TLispType< CPrim > PrimType;
 
-enum LispObjectType {
+  enum LispObjectType {
 	NIL = 0,
 	CHAR,
 	FIXNUM,
@@ -116,13 +120,13 @@ enum LispObjectType {
 	STRING,
 	CONS,
 	PRIM
-};
+  };
 
 	
-typedef	 boost::variant< NullType, CharType, FixnumType, FloatnumType, SymbolType, StringType, ConsType, PrimType > LispObjBase;
+  typedef	 boost::variant< NullType, CharType, FixnumType, FloatnumType, SymbolType, StringType, ConsType, PrimType > LispObjBase;
 	
-class LispObj : public LispObjBase {
-public:
+  class LispObj : public LispObjBase {
+  public:
 	LispObj() : LispObjBase() {
 			
 	}
@@ -147,7 +151,7 @@ public:
 	LispObj(const PrimType& primitive) : LispObjBase(primitive) {
 		
 	}
-};
+  };
 
 } // end namespace lisp
 

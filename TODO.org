@@ -3,7 +3,7 @@
 * Reader
 ** DONE Distinguish beteween floats and ints
 ** DONE Handle escaped quotes in strings
-** TODO Handle chars
+** DONE Handle chars
 
 * Types
 ** DONE Make s32 fixnum type
@@ -14,9 +14,10 @@
 ** DONE Eval ints
 ** DONE Eval strings
 ** TODO Eval quote
-*** TODO Add quote symbol main env
-*** TODO Process quote in reader
-*** TODO Process quote in eval
+*** DONE Add quote symbol main env
+*** DONE Process quote in reader
+*** DONE Process quote in eval
+**** Implemented quote as a function
 ** DONE Eval symbol get
 ** TODO Eval symbol set
 ** TODO Eval if form

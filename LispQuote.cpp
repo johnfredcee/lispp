@@ -1,11 +1,12 @@
 
 #include "LispObj.h"
+#include "LispEnv.h"
 #include "LispQuote.h"
 
 namespace Lisp {
 
-LispObjRef LispQuote::quote_fn(LispObjRef cons) {
+  LispObjRef LispQuote::quote_fn(LispObjRef cons, LispEnvRef env) {
 	return cons;		
-}
+  }
 
 }
