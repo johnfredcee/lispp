@@ -12,7 +12,7 @@
 namespace Lisp {
   LispObjRef make_char(CChar val)
   {
-	return boost::shared_ptr<LispObj>(new LispObj(CharType(val)));
+	return boost::shared_ptr<LispObj>(new LispObj(val));
   }
 
   bool is_char(LispObjRef obj)
