@@ -18,5 +18,5 @@ namespace Lisp {
   bool is_char(LispObjRef obj)
   {
 	return (obj->which() == CHAR);
-  }	
+  }
 }
