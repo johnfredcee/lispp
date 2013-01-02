@@ -7,8 +7,6 @@ import sys
 
 vars = Variables('custom.py')
 vars.Add(BoolVariable('SYNTAX', 'Set to 1 for a syntax check',0))
-vars.Add(EnumVariable('DUMPENV', 'Set to var to dump environment', 'NONE', 
-		      [ 'NONE', 'CPPPATH', 'CPPFLAGS']))
 vars.Add(PathVariable('BOOST', 'Path to boost', '/usr/include/boost'))
 if os.name == "posix":
 	env = Environment(variables=vars)
@@ -41,10 +39,6 @@ def run_etags(env, target, source):
 sources = [ "Main.cpp", "LispObj.cpp", "LispReader.cpp", "LispFixNum.cpp", "LispFloatNum.cpp", "LispChar.cpp", "LispNil.cpp" , "LispCons.cpp", "LispString.cpp", "LispSymbol.cpp", "LispPrinter.cpp", "LispEnv.cpp", "LispEval.cpp", "LispPrimitive.cpp", "LispQuote.cpp" ]
 objects = [os.path.splitext(s)[0] + ".o" for s in sources]
 
-if (env["DUMPENV"]!="NONE"):
-        print  env.Dump(env["DUMPENV"])
-	Exit(0)
-
 # needs to change - needs to get .cpp / .c file on command line and build
 if (env["SYNTAX"]==1):
 	print "Syntax checking %s " % str(COMMAND_LINE_TARGETS)
@@ -52,6 +46,6 @@ if (env["SYNTAX"]==1):
 else:
 	for s,o in zip(sources,objects):
 		env.StaticObject(o,s)
-		env.Program("lispp", sources)
-		env.Command("TAGS", env.Glob(r"*.cpp")  + env.Glob(r"*.h"), [ run_etags ])
+	env.Program("lispp", sources)
+	env.Command("TAGS", env.Glob(r"*.cpp")  + env.Glob(r"*.h"), [ run_etags ])
 
