@@ -14,7 +14,7 @@
 namespace Lisp {
 	LispObjRef make_floatnum(CFloatnum  val)
 	{
-		return boost::shared_ptr<LispObj>(new LispObj(FloatnumType(val)));
+		return boost::shared_ptr<LispObj>(new LispObj(val));
 	}
 
 	bool is_floatnum(LispObjRef obj)

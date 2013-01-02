@@ -8,6 +8,10 @@ import sys
 vars = Variables('custom.py')
 vars.Add(BoolVariable('SYNTAX', 'Set to 1 for a syntax check',0))
 vars.Add(PathVariable('BOOST', 'Path to boost', '/usr/include/boost'))
+vars.Add(EnumVariable('DUMPENV', 'Set to var to dump environment', 'NONE',
+		      [ 'NONE', 'CPPPATH', 'CPPFLAGS']))
+#vars.Add(PathVariable('BOOST', 'Path to boost', r'w:\tools_libraries\boost'))
+
 if os.name == "posix":
 	env = Environment(variables=vars)
 else:
@@ -23,8 +27,8 @@ def run_etags(env, target, source):
 	listname = listfile.name
 	for sfile in source:
 		print >>listfile, str(sfile)
-	listfile.close()		
-	etagargs = shlex.split("ctags -e --options=.etags --verbose --c++-kinds=cfnstunedm --extra=+q  -o %s -L %s" % (target[0], listname))	
+	listfile.close()
+	etagargs = shlex.split("ctags -e --options=.etags --verbose --c++-kinds=cfnstunedm --extra=+q  -o %s -L %s" % (target[0], listname))
 	print etagargs
 	try:
 		retcode = subprocess.call(etagargs)
@@ -47,5 +51,6 @@ else:
 	for s,o in zip(sources,objects):
 		env.StaticObject(o,s)
 	env.Program("lispp", sources)
-	env.Command("TAGS", env.Glob(r"*.cpp")  + env.Glob(r"*.h"), [ run_etags ])
+#	env.Command("TAGS", env.Glob(r"*.cpp")  + env.Glob(r"*.h"), [ run_etags ])
+
 
