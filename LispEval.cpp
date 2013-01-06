@@ -18,8 +18,8 @@ namespace Lisp {
 	// trivial case :-)
 	if (is_nil(obj))
 	  return nil;
-	// constant literal (TODO: shoukd be using is<type> predicates)
-	if (is_char(obj) ||	is_fixnum(obj) || is_floatnum(obj)  || is_string(obj))
+	// constant literal 
+	if (is_char(obj) ||	is_fixnum(obj) || is_floatnum(obj) || is_string(obj))
 	  return obj;
 	// symbol lookup
 	if (is_symbol(obj)) {
@@ -29,7 +29,7 @@ namespace Lisp {
 	if (is_cons(obj)) {
 	  // must be function invocation -- function symbol
 	  LispObjRef fnsym(car(obj));
-	  LispObjRef fn = env->fref(((LispSymbol)(boost::get<SymbolType>(*fnsym))).first);
+	  LispObjRef fn = env->fref(get_ctype<SymbolType>(fnsym).first);
 	  // it's a function
 	  if (is_primitive(fn)) {
 		CPrim cfn = (CPrim)(boost::get<PrimType>(*fn));

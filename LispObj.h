@@ -177,7 +177,7 @@ inline LispObjRef make_literal(const cstrptr& literal)
 template <class LT>
 inline typename LT::CType get_ctype(LispObjRef obj)
 {
-	return ((LT::CType)(boost::get<LT>(*obj))); 
+	return ((typename LT::CType)(boost::get<LT>(*obj))); 
 }
 
 } // end namespace lisp

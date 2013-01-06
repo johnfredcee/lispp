@@ -181,6 +181,8 @@ LispObjRef Reader::read_list()
 	LispObjRef car = readToken();
 	if (tokenType_ == LPAREN)
 		car = read_list();
+	if (is_nil(car))
+		return nil;
 	if (tokenType_ != RPAREN)
 		return make_cons(car, read_the_rest());
 	return make_cons(car, nil);
