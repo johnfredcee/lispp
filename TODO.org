@@ -23,5 +23,8 @@
 ** TODO Eval if form
 ** TODO Eval primitive procedures
 
+* Implementation
+** Bootstrap scheme 05 - done
+
 Bugs
 ** DONE Lists don't get echoed
