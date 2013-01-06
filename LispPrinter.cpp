@@ -36,13 +36,13 @@ namespace Lisp {
 		if (is_nil(obj))
 			output_ << "NIL";
 		else if (is_fixnum(obj))
-			output_ << (CFixnum)(boost::get<FixnumType>(*obj));
+			output_ << get_ctype<FixnumType>(obj); // (CFixnum)(boost::get<FixnumType>(*obj));
 		else if (is_floatnum(obj))
-			output_ << (CFloatnum)(boost::get<FloatnumType>(*obj));
+			output_ <<  get_ctype<FloatnumType>(obj); //(CFloatnum)(boost::get<FloatnumType>(*obj));
 		else if (is_string(obj))
-			output_ << "\"" << (CString)(boost::get<StringType>(*obj)) << "\""; 
+			output_ << "\"" << get_ctype<StringType>(obj) << "\""; // ""(CString)(boost::get<StringType>(*obj)) << "\""; 
 		else if (is_symbol(obj))
-			output_ << static_cast<LispSymbol>(boost::get<SymbolType>(*obj)).first;
+			output_ << get_ctype<SymbolType>(obj).first; // static_cast<LispSymbol>(boost::get<SymbolType>(*obj)).first;
 		else if (is_cons(obj)) {
 			output_ << "(";
 			print_cons(obj);

@@ -23,7 +23,7 @@ namespace Lisp {
 	  return obj;
 	// symbol lookup
 	if (is_symbol(obj)) {
-	  return env->ref(((LispSymbol)(boost::get<SymbolType>(*obj))).first);
+		return env->ref(get_ctype<SymbolType>(obj).first); // ((LispSymbol)(boost::get<SymbolType>(*obj))).first);
 	}
 	// cons cell
 	if (is_cons(obj)) {
