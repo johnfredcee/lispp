@@ -20,10 +20,16 @@ namespace Lisp {
 	void Printer::print_cons(LispObjRef obj) {
 		print(car(obj));
 		LispObjRef next(cdr(obj));
-		if (!is_nil(next)) {
+		if (!is_cons(next)) {
 			output_ << " ";
 			print_cons(next);					
+			return;
 		}
+		if (is_nil(next)) {
+			return;
+		}
+		output_ << " . ";
+		print(next);
 	}
 
 	void Printer::print(LispObjRef obj) {

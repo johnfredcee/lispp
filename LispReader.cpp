@@ -113,6 +113,11 @@ void Reader::nextToken() {
 			token_ = std::string("(");
 			break;
 		}
+		if (ic == '.') {
+			tokenType_ = PERIOD;
+			token_ = std::string(".");
+			break;
+		}
 		if(ic == '\"') {
 			token_ = readString();
 			tokenType_ = STRING;
@@ -136,6 +141,23 @@ void Reader::nextToken() {
 		tokenType_ = TERMINAL;
 }
 
+bool Reader::isPeriodNext() {
+	bool result = false;
+	char ic;
+	while (input_.good()) {
+		input_.get(ic);
+		if (!isspace(ic)) {
+			if (ic == '.') {
+				result = true;
+			} else {
+				input_.putback(ic);
+			}
+			break;
+		}
+	}
+	return result;
+}
+
 LispObjRef Reader::readToken() {
 	nextToken();
 	if (tokenType_ == TERMINAL) {
@@ -151,6 +173,9 @@ LispObjRef Reader::readToken() {
 		return nil;
 	}
 	if (tokenType_ == LPAREN) {
+		return nil;
+	}
+	if (tokenType_ == PERIOD) {
 		return nil;
 	}
 	if (tokenType_ == SYMBOL) {
@@ -178,14 +203,20 @@ LispObjRef Reader::read_the_rest()
 
 LispObjRef Reader::read_list() 
 {
-	LispObjRef car = readToken();
-	if (tokenType_ == LPAREN)
-		car = read_list();
-	if (is_nil(car))
-		return nil;
-	if (tokenType_ != RPAREN)
-		return make_cons(car, read_the_rest());
-	return make_cons(car, nil);
+	LispObjRef car = readToken();	
+	if (is_nil(car) && (tokenType_ == RPAREN))
+		return nil;	
+	if (isPeriodNext()) {
+		LispObjRef cdr = read();
+		LispObjRef result =  make_cons(car,cdr);
+		if (tokenType_ != RPAREN) {
+			std::cerr << "Badly formed s-expression" << std::endl;
+			return nil;
+		}
+		return result;
+	}
+	LispObjRef cdr = read_list();
+	return make_cons(car, cdr);
 }
 
 LispObjRef Reader::read() {

@@ -17,22 +17,13 @@ namespace Lisp {
 			RPAREN,
 			FIXNUM,
 			FLOATNUM,
+			PERIOD,
 			TERMINAL
 		};
 
 		Reader(std::istream& input);
 
 		virtual ~Reader();
-
-		std::string readString();
-
-		std::string readChar();
-
-		std::string readNumberOrSymbol(TokenType& type);
-
-		std::string readQuote(TokenType& type);
-
-		void nextToken();
 
 		LispObjRef readToken();
 
@@ -44,14 +35,28 @@ namespace Lisp {
 
 		LispObjRef operator()();
 
-
 		std::string  token_;
 
 		TokenType    tokenType_;
 
 	private:
+
 		std::istream& input_;
+
 		std::string  current_line_;
+
+		bool isPeriodNext();
+
+		void nextToken();
+
+		std::string readString();
+
+		std::string readChar();
+
+		std::string readNumberOrSymbol(TokenType& type);
+
+		std::string readQuote(TokenType& type);
+
 	};
 
 }
