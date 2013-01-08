@@ -18,11 +18,13 @@ LispObjRef make_cons(LispObjRef car, LispObjRef cdr) {
 }
 
 LispObjRef car(LispObjRef cons) {
-	return ((CCons)(boost::get<ConsType>(*cons))).first;
+	assert(is_cons(cons));
+	return get_ctype<ConsType>(cons).first;
 }
 
 LispObjRef cdr(LispObjRef cons) {
-	return ((CCons)(boost::get<ConsType>(*cons))).second;
+	assert(is_cons(cons));
+	return get_ctype<ConsType>(cons).second;
 }
 
 bool is_cons(LispObjRef obj) {

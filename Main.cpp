@@ -24,6 +24,7 @@ int main(int argc, char** argv)
 	// REPL
 	while (1) {
 		LispObjRef obj = read();
+//		print(obj);
 		LispObjRef eobj = eval(obj, LispEnv::globalEnv);
 		print(eobj);
 	}

@@ -49,7 +49,7 @@ LispObjRef LispEnv::set(std::string var, LispObjRef ref) {
 
 // resolve a reference to a function in an environment	
 LispObjRef LispEnv::fref(std::string var)  {
-	EnvironmentT::iterator it(env_.find(var));
+	EnvironmentT::iterator it(fEnv_.find(var));
 	if (it != fEnv_.end()) {
 		return it->second;
 	};
