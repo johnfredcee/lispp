@@ -15,7 +15,7 @@ vars.Add(EnumVariable('DUMPENV', 'Set to var to dump environment', 'NONE',
 if os.name == "posix":
 	env = Environment(variables=vars)
 else:
-	env = Environment(variables=vars, tools = [ 'mingw' ])
+	env = Environment(ENV=os.environ, variables=vars,  tools = [ 'mingw' ])
 env.Append(CXXFLAGS=[ "-g", "-O0", "-Wall" ])
 env.Append(CPPPATH = [ env['BOOST'] ])
 if (env["SYNTAX"] == 1):
