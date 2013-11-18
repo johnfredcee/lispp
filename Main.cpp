@@ -17,16 +17,26 @@ using namespace Lisp;
 
 int main(int argc, char** argv)
 {
-	Lisp::Reader  read(std::cin);
+	std::ifstream instream;
+	if (argc > 1) {
+		instream.open(argv[1], std::ifstream::in);
+	}
+
+	std::ofstream outstream;
+	if (argc > 2) {
+		outstream.open(argv[2], std::ofstream::out); 
+	}
+		
+	Lisp::Reader  read(instream.is_open() ? instream : std::cin);
 	Lisp::Eval    eval;
-	Lisp::Printer print(std::cout);
+	Lisp::Printer print(outstream.is_open() ? outstream : std::cout);
 
 	// REPL
-	while (1) {
+	while ((!instream.is_open()) || (instream.is_open() && (instream.good()))) {
 		LispObjRef obj = read();
 //		print(obj);
 		LispObjRef eobj = eval(obj, LispEnv::globalEnv);
-		print(eobj);
+		print(eobj);				
 	}
 	exit(0);
 }

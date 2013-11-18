@@ -5,6 +5,7 @@
 ** DONE Handle escaped quotes in strings
 ** DONE Handle chars
 
+** TODO Handle dotted lists
 * Types
 ** DONE Make s32 fixnum type
 ** DONE Add symbol type
@@ -26,3 +27,5 @@
 
 Bugs
 ** DONE Lists don't get echoed
+* Bugs
+** Crash evaluating simple list
