@@ -1,0 +1,12 @@
+cmake_minimum_required (VERSION 2.8)
+project (Lispp)
+
+file(GLOB lispp_src "*.cpp")
+set(Boost_DEBUG 1)
+set(Boost_USE_STATIC_LIBS ON) 
+set(Boost_USE_MULTITHREADED ON)  
+set(Boost_USE_STATIC_RUNTIME ON) 
+find_package(Boost REQUIRED COMPONENTS log_setup log date_time atomic filesystem system thread)
+include_directories(${Boost_INCLUDE_DIRS}) 
+add_executable(Lispp ${lispp_src})
+target_link_libraries(Lispp ${Boost_LIBRARIES})                        
