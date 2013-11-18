@@ -15,12 +15,12 @@ vars.Add(EnumVariable('DUMPENV', 'Set to var to dump environment', 'NONE',
 if os.name == "posix":
 	env = Environment(variables=vars)
 else:
-	env = Environment(variables=vars, tools = [ 'mingw' ])
+	env = Environment(ENV=os.environ, variables=vars,  tools = [ 'mingw' ])
 env.Append(CXXFLAGS=[ "-g", "-O0", "-Wall" ])
 env.Append(CPPPATH = [ env['BOOST'] ])
 if (env["SYNTAX"] == 1):
 	env.Append(CCFLAGS=["-fsyntax-only"])
-
+env.Append(LIBS = ["boost_log_setup", "boost_log", "boost_thread", "boost_date_time", "boost_atomic", "boost_filesystem", "boost_system" ])
 
 def run_etags(env, target, source):
 	listfile = tempfile.NamedTemporaryFile(mode="w+", dir=os.getcwd(), delete=False)
