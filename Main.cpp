@@ -36,17 +36,10 @@ int main(int argc, char** argv)
 
 	boost::log::add_file_log("lispp.log");
 
-    BOOST_LOG_TRIVIAL(trace) << "A trace severity message";
-    BOOST_LOG_TRIVIAL(debug) << "A debug severity message";
-    BOOST_LOG_TRIVIAL(info) << "An informational severity message";
-    BOOST_LOG_TRIVIAL(warning) << "A warning severity message";
-    BOOST_LOG_TRIVIAL(error) << "An error severity message";
-    BOOST_LOG_TRIVIAL(fatal) << "A fatal severity message";
-
 	// REPL
 	while ((!instream.is_open()) || (instream.is_open() && (instream.good()))) {
 		LispObjRef obj = read();
-//		print(obj);
+		print(obj);
 		LispObjRef eobj = eval(obj, LispEnv::globalEnv);
 		print(eobj);				
 	}

@@ -4,6 +4,7 @@
 #include "LispFixNum.h"
 #include "LispFloatNum.h"
 #include "LispString.h"
+#include "LispChar.h"
 #include "LispSymbol.h"
 #include "LispReader.h"
 #include "LispCons.h"
@@ -184,6 +185,9 @@ LispObjRef Reader::readToken() {
 		} else {
 			return make_symbol(token_.c_str());
 		}
+	}
+	if (tokenType_ == CHAR) {
+		return make_char(token_[0]);
 	}
 	if (tokenType_ == STRING) {
 		return make_string(token_.c_str());
