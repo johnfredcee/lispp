@@ -180,6 +180,7 @@ inline typename LT::CType get_ctype(LispObjRef obj)
 	return ((typename LT::CType)(boost::get<LT>(*obj))); 
 }
 
+
 } // end namespace lisp
 
 

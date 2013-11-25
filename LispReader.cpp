@@ -1,4 +1,5 @@
 
+#include <boost/log/trivial.hpp>
 #include <cctype>
 #include "LispNil.h"
 #include "LispFixNum.h"
@@ -101,34 +102,41 @@ std::string Reader::readQuote(TokenType& type) {
 void Reader::nextToken() {
 	char ic;
 	tokenType_ = UNKNOWN;
+    BOOST_LOG_TRIVIAL(trace) << "Get next token";
 	while((input_.good()) && (tokenType_ == UNKNOWN))  {
 		input_.get(ic);
 		if(ic == ')') {
 			tokenType_ = RPAREN;
 			token_ = std::string(")");
+			BOOST_LOG_TRIVIAL(trace) << "RPAREN";
 			break;
 		}
 		if(ic == '(') {
 			tokenType_ = LPAREN;
 			token_ = std::string("(");
+			BOOST_LOG_TRIVIAL(trace) << "LPAREN";
 			break;
 		}
 		if (ic == '.') {
 			tokenType_ = PERIOD;
 			token_ = std::string(".");
+			BOOST_LOG_TRIVIAL(trace) << "PERIOD";
 			break;
 		}
 		if(ic == '\"') {
 			token_ = readString();
+			BOOST_LOG_TRIVIAL(trace) << "STRING";
 			tokenType_ = STRING;
 			break;
 		}
 		if(ic == '#') {
+			BOOST_LOG_TRIVIAL(trace) << "CHAR";
 			token_ = readChar();
 			tokenType_ = CHAR;
 		}
 			
 		if(ic == '\'') {
+			BOOST_LOG_TRIVIAL(trace) << "QUOTE";
 			token_ = readQuote(tokenType_);
 			break;
 		}			
