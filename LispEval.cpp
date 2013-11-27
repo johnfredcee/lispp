@@ -35,18 +35,17 @@ namespace Lisp {
 		}
 		// must be function invocation -- function symbol
 		LispObjRef fnsym(car(obj));
-		LispObjRef fn = env->fref(get_ctype<SymbolType>(fnsym).first);
-		// it's a function
-		if (is_primitive(fn)) {
-			CPrim cfn = (CPrim)(boost::get<PrimType>(*fn));
-			// call it on the cdr
-			return cfn(cdr(obj), env);
-	  } else {
-			
-		// otherwise, it's a literal cons
-		//return make_cons((*this)(car(obj)), (*this)(cdr(obj), env));
-	  }
-	}
+		if (is_symbol(fnsym))
+		{	
+			LispObjRef fn = env->fref(get_ctype<SymbolType>(fnsym).first);
+			// it's a function
+			if (is_primitive(fn)) {
+				CPrim cfn = (CPrim)(boost::get<PrimType>(*fn));
+				// call it on the cdr
+				return cfn(cdr(obj), env);
+			} // else .. it's a lambda..
+		}
+	} 
 	return nil;		
   };
 }

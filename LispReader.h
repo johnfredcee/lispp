@@ -49,6 +49,8 @@ namespace Lisp {
 
 		void nextToken();
 
+		void whitespace();
+
 		std::string readString();
 
 		std::string readChar();
