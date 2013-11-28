@@ -69,7 +69,7 @@ LispObjRef LispEnv::fset(std::string var, LispObjRef ref) {
 LispObjRef LispEnv::set_fn(LispObjRef cons, LispEnvRef env) {
 	// car of cons should be a symbol
 	if (is_symbol(car(cons)))
-		env->set(get_ctype<SymbolType>(car(cons)).first, cdr(cons));
+		env->set(get_ctype<SymbolType>(car(cons)).name, cdr(cons));
 	return cdr(cons);
 }
 }

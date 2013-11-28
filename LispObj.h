@@ -89,7 +89,21 @@ public:
 typedef LispObjRef (*CPrim)(LispObjRef args, LispEnvRef env);
 
 /* symbol : a name that references an object */ 
-typedef std::pair< std::string, LispObjRef > LispSymbol;
+struct LispSymbol
+{
+	std::string name;
+	LispObjRef value;
+	
+	LispSymbol(const std::string& n, const LispObjRef& v) : name(n), value(v)
+	{
+	};
+
+	LispSymbol(const LispSymbol& sym) {
+		value = sym.value;
+		name = sym.name;
+	}
+};
+
 
 /* byte */
 typedef TLispType<CChar> CharType;

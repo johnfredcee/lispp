@@ -42,7 +42,7 @@ namespace Lisp {
 		else if (is_string(obj))
 			output_ << "\"" << get_ctype<StringType>(obj) << "\""; // ""(CString)(boost::get<StringType>(*obj)) << "\""; 
 		else if (is_symbol(obj))
-			output_ << get_ctype<SymbolType>(obj).first; // static_cast<LispSymbol>(boost::get<SymbolType>(*obj)).first;
+			output_ << get_ctype<SymbolType>(obj).name; // static_cast<LispSymbol>(boost::get<SymbolType>(*obj)).first;
 		else if (is_cons(obj)) {
 			output_ << "(";
 			print_cons(obj);

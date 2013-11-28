@@ -36,7 +36,7 @@ void trace(LispObjRef obj)
 			BOOST_LOG_TRIVIAL(trace) << " char=" << get_ctype<FloatnumType>(obj);
 			break;
 		case	SYMBOL:
-			BOOST_LOG_TRIVIAL(trace) << " sym=" << get_ctype<SymbolType>(obj).first;
+			BOOST_LOG_TRIVIAL(trace) << " sym=" << get_ctype<SymbolType>(obj).name;
 			break;
 		case	STRING:
 			BOOST_LOG_TRIVIAL(trace) << " char=" << get_ctype<StringType>(obj);

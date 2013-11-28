@@ -17,7 +17,7 @@ namespace Lisp {
 LispObjRef make_symbol(const char* string) 
 {
 	std::string tempstr(string);
-	std::pair<std::string, LispObjRef> sym(tempstr, nil);
+	LispSymbol sym(tempstr, nil);
 	return boost::shared_ptr<LispObj>(new LispObj(SymbolType(sym)));
 }
 
@@ -25,13 +25,14 @@ LispObjRef make_symbol(const char* string)
 LispObjRef set_symbol_val(LispObjRef sym, LispObjRef rhs)
 {
 	SymbolType& symref = boost::get<SymbolType>(*sym);
-	static_cast<LispSymbol>(symref).second = rhs;
-	return static_cast<LispSymbol>(symref).second;
+	static_cast<LispSymbol>(symref).value = rhs;
+	return static_cast<LispSymbol>(symref).value;
 }
 
 LispObjRef get_symbol_val(LispObjRef sym)
 {
-	return get_ctype<SymbolType>(sym).second;
+	assert(is_symbol(sym));
+	return get_ctype<SymbolType>(sym).value;
 }
 
 bool is_symbol(LispObjRef obj) 
@@ -41,7 +42,7 @@ bool is_symbol(LispObjRef obj)
 
 bool is_quote_symbol(LispObjRef obj)
 {
-	return ((is_symbol(obj)) && (get_ctype<SymbolType>(obj).first == "QUOTE"));
+	return ((is_symbol(obj)) && (get_ctype<SymbolType>(obj).name == "QUOTE"));
 }
 
 } // namespace Lisp

@@ -23,7 +23,7 @@ namespace Lisp {
 	  return obj;
 	// symbol lookup
 	if (is_symbol(obj)) {
-		return env->ref(get_ctype<SymbolType>(obj).first); // ((LispSymbol)(boost::get<SymbolType>(*obj))).first);
+		return env->ref(get_ctype<SymbolType>(obj).name); // ((LispSymbol)(boost::get<SymbolType>(*obj))).first);
 	}
 	// cons cell
 	if (is_cons(obj)) 
@@ -37,7 +37,7 @@ namespace Lisp {
 		LispObjRef fnsym(car(obj));
 		if (is_symbol(fnsym))
 		{	
-			LispObjRef fn = env->fref(get_ctype<SymbolType>(fnsym).first);
+			LispObjRef fn = env->fref(get_ctype<SymbolType>(fnsym).name);
 			// it's a function
 			if (is_primitive(fn)) {
 				CPrim cfn = (CPrim)(boost::get<PrimType>(*fn));
