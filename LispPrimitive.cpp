@@ -3,7 +3,6 @@
 
 namespace Lisp {
 
-
 bool is_primitive(LispObjRef obj) {
 	return (obj->which() == PRIM);
 }

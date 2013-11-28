@@ -7,7 +7,7 @@
 namespace Lisp {
 
   LispObjRef LispQuote::quote_fn(LispObjRef cons, LispEnvRef env) {
-	  return car(cons);		
+	  return cons;		
   }
 
 }

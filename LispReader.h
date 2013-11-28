@@ -18,6 +18,7 @@ namespace Lisp {
 			FIXNUM,
 			FLOATNUM,
 			PERIOD,
+			QUOTE,
 			TERMINAL
 		};
 

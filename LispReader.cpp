@@ -10,6 +10,7 @@
 #include "LispReader.h"
 #include "LispCons.h"
 #include "LispSymbol.h"
+#include "LispEnv.h"
 
 using namespace std;
 
@@ -128,7 +129,7 @@ namespace Lisp {
 
 	std::string Reader::readQuote(TokenType& type) {
 		std::string result = "QUOTE";
-		type = SYMBOL;
+		type = QUOTE;
 		return result;
 	}
 
@@ -263,10 +264,12 @@ namespace Lisp {
 
 	LispObjRef Reader::read() {
 		LispObjRef first = readToken();
-		if (tokenType_ != LPAREN)
+		if ((tokenType_ != LPAREN) && (tokenType_ != QUOTE))
 			return first;
-		return
-			read_list();
+		if (tokenType_ == QUOTE)
+			return make_cons( LispEnv::globalEnv->fref("QUOTE"), 
+							  read() );
+		return read_list();
 	}
 
 	LispObjRef Reader::operator()() {

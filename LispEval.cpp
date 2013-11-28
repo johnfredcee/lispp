@@ -28,22 +28,17 @@ namespace Lisp {
 	// cons cell
 	if (is_cons(obj)) 
 	{
-		// quote
-		if (is_quote_symbol(car(obj))) 
-		{
-			return car(cdr(obj));
-		}
 		// must be function invocation -- function symbol
 		LispObjRef fnsym(car(obj));
-		if (is_symbol(fnsym))
+		if (is_symbol(fnsym) || is_primitive(fnsym))
 		{	
-			LispObjRef fn = env->fref(get_ctype<SymbolType>(fnsym).name);
+			LispObjRef fn = is_symbol(fnsym) ? env->fref(get_ctype<SymbolType>(fnsym).name) : fnsym;
 			// it's a function
 			if (is_primitive(fn)) {
 				CPrim cfn = (CPrim)(boost::get<PrimType>(*fn));
 				// call it on the cdr
 				return cfn(cdr(obj), env);
-			} // else .. it's a lambda..
+			} // Else .. it's a lambda..
 		}
 	} 
 	return nil;		
