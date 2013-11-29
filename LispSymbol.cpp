@@ -29,11 +29,12 @@ LispObjRef set_symbol_val(LispObjRef sym, LispObjRef rhs)
 	return static_cast<LispSymbol>(symref).value;
 }
 
-LispObjRef get_symbol_val(LispObjRef sym)
+LispObjRef get_symbol_value(LispObjRef sym)
 {
 	assert(is_symbol(sym));
 	return get_ctype<SymbolType>(sym).value;
 }
+
 
 bool is_symbol(LispObjRef obj) 
 {

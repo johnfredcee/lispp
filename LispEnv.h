@@ -27,6 +27,9 @@ namespace Lisp {
 	/** Set a var in the environment */
 	LispObjRef set(std::string var, LispObjRef ref);	
 
+	/** define a var in the environment */
+	LispObjRef define(std::string var, LispObjRef ref);
+
 	/** fetch function in environment */
 	LispObjRef fref(std::string var);
 
@@ -35,6 +38,12 @@ namespace Lisp {
 
 	/** Set function primitive */
 	static LispObjRef set_fn(LispObjRef cons, LispEnvRef env);
+
+	/** Set function primitive */
+	static LispObjRef define_fn(LispObjRef cons, LispEnvRef env);
+
+	/** Set function primitive */
+	static LispObjRef defun_fn(LispObjRef cons, LispEnvRef env);
 
 	/** Global environment */
 	static LispEnvRef globalEnv;

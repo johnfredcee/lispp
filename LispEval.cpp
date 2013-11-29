@@ -38,7 +38,15 @@ namespace Lisp {
 				CPrim cfn = (CPrim)(boost::get<PrimType>(*fn));
 				// call it on the cdr
 				return cfn(cdr(obj), env);
-			} // Else .. it's a lambda..
+			} else {
+				// Else .. it's a lambda..
+				if (is_cons(fn)) {
+					LispObjRef args = car(fn);
+					LispObjRef body = cdr(fn);
+					// extend env, bind (cdr obj to args), eval body with new env
+					// ..
+				}
+			}
 		}
 	} 
 	return nil;		
