@@ -24,6 +24,7 @@ namespace Lisp
 Lisp::Eval eval;
 }
 
+// exists to be invoked from gdb for debugging purposes
 void trace(LispObjRef obj)
 {
 	BOOST_LOG_TRIVIAL(trace) << "--";
@@ -73,8 +74,6 @@ int main(int argc, char** argv)
 		
 	Lisp::Reader  read(instream.is_open() ? instream : std::cin);
 	Lisp::Printer print(outstream.is_open() ? outstream : std::cout);
-
-	//boost::log::add_file_log("lispp.log");
 
 	// REPL
 	while ((!instream.is_open()) || (instream.is_open() && (instream.good()))) {
