@@ -136,42 +136,42 @@ namespace Lisp {
 	void Reader::nextToken() {
 		char ic;
 		tokenType_ = UNKNOWN;
-		BOOST_LOG_TRIVIAL(trace) << "Get next token";
+		//BOOST_LOG_TRIVIAL(trace) << "Get next token";
 		whitespace();
 		while((input_.good()) && (tokenType_ == UNKNOWN))  {
 			input_.get(ic);
 			if(ic == ')') {
 				tokenType_ = RPAREN;
 				token_ = std::string(")");
-				BOOST_LOG_TRIVIAL(trace) << "RPAREN";
+				//BOOST_LOG_TRIVIAL(trace) << "RPAREN";
 				break;
 			}
 			if(ic == '(') {
 				tokenType_ = LPAREN;
 				token_ = std::string("(");
-				BOOST_LOG_TRIVIAL(trace) << "LPAREN";
+				//BOOST_LOG_TRIVIAL(trace) << "LPAREN";
 				break;
 			}
 			if (ic == '.') {
 				tokenType_ = PERIOD;
 				token_ = std::string(".");
-				BOOST_LOG_TRIVIAL(trace) << "PERIOD";
+				//BOOST_LOG_TRIVIAL(trace) << "PERIOD";
 				break;
 			}
 			if(ic == '\"') {
 				token_ = readString();
-				BOOST_LOG_TRIVIAL(trace) << "STRING";
+				//BOOST_LOG_TRIVIAL(trace) << "STRING";
 				tokenType_ = STRING;
 				break;
 			}
 			if(ic == '#') {
-				BOOST_LOG_TRIVIAL(trace) << "CHAR";
+				//BOOST_LOG_TRIVIAL(trace) << "CHAR";
 				token_ = readChar();
 				tokenType_ = CHAR;
 			}
 			
 			if(ic == '\'') {
-				BOOST_LOG_TRIVIAL(trace) << "QUOTE";
+				//BOOST_LOG_TRIVIAL(trace) << "QUOTE";
 				token_ = readQuote(tokenType_);
 				break;
 			}			

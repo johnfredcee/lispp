@@ -19,8 +19,14 @@
 
 using namespace Lisp;
 
+namespace Lisp
+{
+Lisp::Eval eval;
+}
+
 void trace(LispObjRef obj)
 {
+	BOOST_LOG_TRIVIAL(trace) << "--";
 	switch(obj->which())
 	{
 		case NIL:
@@ -30,10 +36,10 @@ void trace(LispObjRef obj)
 			BOOST_LOG_TRIVIAL(trace) << " char=" << get_ctype<CharType>(obj);
 			break;
 		case	FIXNUM:
-			BOOST_LOG_TRIVIAL(trace) << " char=" << get_ctype<FixnumType>(obj);
+			BOOST_LOG_TRIVIAL(trace) << " fixnum=" << get_ctype<FixnumType>(obj);
 			break;
 		case	FLOATNUM:
-			BOOST_LOG_TRIVIAL(trace) << " char=" << get_ctype<FloatnumType>(obj);
+			BOOST_LOG_TRIVIAL(trace) << " floatnum=" << get_ctype<FloatnumType>(obj);
 			break;
 		case	SYMBOL:
 			BOOST_LOG_TRIVIAL(trace) << " sym=" << get_ctype<SymbolType>(obj).name;
@@ -49,7 +55,7 @@ void trace(LispObjRef obj)
 			BOOST_LOG_TRIVIAL(trace) << " prim() ";
 			break;
 	}
-		
+	BOOST_LOG_TRIVIAL(trace) << "--";
 }
 
 int main(int argc, char** argv)
@@ -66,10 +72,9 @@ int main(int argc, char** argv)
 	}
 		
 	Lisp::Reader  read(instream.is_open() ? instream : std::cin);
-	Lisp::Eval    eval;
 	Lisp::Printer print(outstream.is_open() ? outstream : std::cout);
 
-	boost::log::add_file_log("lispp.log");
+	//boost::log::add_file_log("lispp.log");
 
 	// REPL
 	while ((!instream.is_open()) || (instream.is_open() && (instream.good()))) {
@@ -77,7 +82,6 @@ int main(int argc, char** argv)
 		print(obj);
 		LispObjRef eobj = eval(obj, LispEnv::globalEnv);
 		print(eobj);				
-
 	}
 	exit(0);
 }

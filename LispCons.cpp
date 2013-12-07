@@ -27,6 +27,13 @@ LispObjRef cdr(LispObjRef cons) {
 	return get_ctype<ConsType>(cons).second;
 }
 
+LispObjRef cadr(LispObjRef cons) {
+	assert(is_cons(cons));
+	LispObjRef ncar = get_ctype<ConsType>(cons).second;
+	assert(is_cons(ncar));
+	return car(ncar);
+}
+
 bool is_cons(LispObjRef obj) {
 	return (obj->which() == CONS);
 }
