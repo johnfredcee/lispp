@@ -1,31 +1,51 @@
 
-
 * Reader
 ** DONE Distinguish beteween floats and ints
 ** DONE Handle escaped quotes in strings
 ** DONE Handle chars
 
-** TODO Handle dotted lists
+** DONE Handle dotted lists
+
 * Types
 ** DONE Make s32 fixnum type
 ** DONE Add symbol type
+
+** TODO Use LispWeakRef for weak_ptr
+** TODO Lisp Prim == std::function?
 
 * Evaluation
 ** DONE Create eval skel
 ** DONE Eval ints
 ** DONE Eval strings
-** TODO Eval quote
+** DONE Eval quote
 *** DONE Add quote symbol main env
 *** DONE Process quote in reader
 *** DONE Process quote in eval
 **** Implemented quote as a function
 ** DONE Eval symbol get
-** TODO Eval symbol set
+** DONE Eval symbol set
 ** TODO Eval if form
-** TODO Eval primitive procedures
+** DONE Eval primitive procedures
 
 
 Bugs
-** DONE Lists don't get echoed
+** TODO Eval apply lambda form 
+*** Apply is a primitive that takes a cons - car is body, cdr is values. car of body is args, cdr of body is code..
+** TODO Eval lambda form
+*** Basically just cons
+** TODO Eval PROG
+** TODO Type Predicates
+** TODO Arith primitives
+** TODO Boolean primitives
+** TODO Type conversions
+** TODO List manipulation
+** TODO Equality testing
+** TODO Bitwise stuff
+** TODO Eval
+** TODO Load
+** TODO Map
+
 * Bugs
-** Crash evaluating simple list
+** DONE Crash evaluating simple list
+** DONE Lists don't get echoed
+** TODO Dump environment in gdb
