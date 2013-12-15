@@ -5,6 +5,7 @@
 #include "LispQuote.h"
 #include "LispCons.h"
 #include "LispSymbol.h"
+#include "LispPrimitive.h"
 #include "LispEval.h"
 
 using namespace std;
@@ -23,6 +24,8 @@ LispEnv::LispEnv() : parent_(LispEnvRef()) {
 	fEnv_["DEFUN"]   = make_literal(PrimType(LispEnv::defun_fn));     
 	fEnv_["CAR"]     = make_literal(PrimType(LispEnv::car_fn));
 	fEnv_["CDR"]     = make_literal(PrimType(LispEnv::cdr_fn));
+	fEnv_["LAMBDA"]  = make_literal(PrimType(LispEnv::lambda_fn));
+	fEnv_["APPLY"]   = make_literal(PrimType(LispEnv::apply_fn));
 }
 
 // constructor - new environment created with parent
@@ -120,4 +123,46 @@ LispObjRef LispEnv::cdr_fn(LispObjRef cons, LispEnvRef env)
 	return cdr(eval(cadr(cons), env));
 }
 
+
+LispObjRef LispEnv::apply_fn(LispObjRef cons, LispEnvRef env)
+{
+	LispObjRef result;
+	LispObjRef fn = cadr(cons);
+	if (!is_nil(fn)) 
+	{
+		LispObjRef params   = car(cdr(cdr(cons)));
+		if (is_symbol(fn)) {
+			fn = env->fref(get_ctype<SymbolType>(fn).name);
+		}
+		if (is_primitive(fn)) {
+			// shouldn't params be evaluated?
+			get_ctype<PrimType>(fn)(params, env);
+		}
+		if (is_cons(fn)) {
+			LispEnvRef newenv(new LispEnv(env));
+			LispObjRef args = car(fn);
+			while (!is_nil(args))
+			{
+				LispObjRef arg = car(args);
+				if (is_symbol(arg))
+				{
+					LispObjRef param = is_nil(param) ? param : eval(car(param),env);
+					newenv->set(get_ctype<SymbolType>(arg).name, param);
+				}
+				args = cdr(args);
+				params = cdr(params);
+			}
+			return eval(cadr(fn), newenv);
+		}
+	}
+	return result;
 }
+
+LispObjRef LispEnv::lambda_fn(LispObjRef cons, LispEnvRef env)
+{
+	LispObjRef args = cadr(cons);
+	LispObjRef body = car(cdr(cdr(cons)));
+	return make_cons(args, body);
+}
+
+} // namespace Lisp

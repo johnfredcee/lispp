@@ -49,6 +49,10 @@ namespace Lisp {
 
 	  static  LispObjRef cdr_fn(LispObjRef cons, LispEnvRef  env);
 
+	  static LispObjRef lambda_fn(LispObjRef cons, LispEnvRef env);
+
+	  static LispObjRef apply_fn(LispObjRef cons, LispEnvRef env);
+
 	  /** Global environment */
 	  static LispEnvRef globalEnv;
 
