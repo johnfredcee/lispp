@@ -21,14 +21,15 @@ using namespace Lisp;
 
 namespace Lisp
 {
-Lisp::Eval eval;
+  Lisp::Eval eval;
 }
+
 
 // exists to be invoked from gdb for debugging purposes
 void trace(LispObjRef obj)
 {
-	BOOST_LOG_TRIVIAL(trace) << "--";
-	switch(obj->which())
+  BOOST_LOG_TRIVIAL(trace) << "--";
+  switch(obj->which())
 	{
 		case NIL:
 			BOOST_LOG_TRIVIAL(trace) << " NIL";
@@ -56,7 +57,7 @@ void trace(LispObjRef obj)
 			BOOST_LOG_TRIVIAL(trace) << " prim() ";
 			break;
 	}
-	BOOST_LOG_TRIVIAL(trace) << "--";
+  BOOST_LOG_TRIVIAL(trace) << "--";
 }
 
 int main(int argc, char** argv)

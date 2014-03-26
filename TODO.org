@@ -12,7 +12,7 @@
 
 ** TODO Use LispWeakRef for weak_ptr
 ** TODO Lisp Prim == std::function?
-
+	
 * Evaluation
 ** DONE Create eval skel
 ** DONE Eval ints

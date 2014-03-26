@@ -53,6 +53,8 @@ namespace Lisp {
 
 	  static LispObjRef apply_fn(LispObjRef cons, LispEnvRef env);
 
+	  static LispObjRef if_fn(LispObjRef cons, LispEnvRef env);
+
 	  /** Global environment */
 	  static LispEnvRef globalEnv;
 

@@ -45,10 +45,10 @@ typedef f32 CFloatnum;
 // placeholder type
 class NullType {
 private:
-	const u32 dead_;
+  const u32 dead_;
 public:
-	NullType() : dead_(0xDEADBEEF) {
-	}
+  NullType() :dead_(0xDEADBEEF) {
+  }
 };
 
 /* This is a template for an unboxed type that can be represented by a simple scalar */
@@ -98,10 +98,9 @@ struct LispSymbol
 	{
 	};
 
-	LispSymbol(const LispSymbol& sym) {
-		value = sym.value;
-		name = sym.name;
-	}
+  LispSymbol(const LispSymbol& sym) : name(sym.name), value(sym.value)
+ {
+ }
 };
 
 

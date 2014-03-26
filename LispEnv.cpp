@@ -26,6 +26,7 @@ LispEnv::LispEnv() : parent_(LispEnvRef()) {
 	fEnv_["CDR"]     = make_literal(PrimType(LispEnv::cdr_fn));
 	fEnv_["LAMBDA"]  = make_literal(PrimType(LispEnv::lambda_fn));
 	fEnv_["APPLY"]   = make_literal(PrimType(LispEnv::apply_fn));
+	fEnv_["IF"]      = make_literal(PrimType(LispEnv::if_fn));
 }
 
 // constructor - new environment created with parent
@@ -123,7 +124,6 @@ LispObjRef LispEnv::cdr_fn(LispObjRef cons, LispEnvRef env)
 	return cdr(eval(cadr(cons), env));
 }
 
-
 LispObjRef LispEnv::apply_fn(LispObjRef cons, LispEnvRef env)
 {
 	LispObjRef result;
@@ -160,9 +160,22 @@ LispObjRef LispEnv::apply_fn(LispObjRef cons, LispEnvRef env)
 
 LispObjRef LispEnv::lambda_fn(LispObjRef cons, LispEnvRef env)
 {
-	LispObjRef args = cadr(cons);
-	LispObjRef body = car(cdr(cdr(cons)));
-	return make_cons(args, body);
+  (void) env;
+  LispObjRef args = cadr(cons);
+  LispObjRef body = car(cdr(cdr(cons)));
+  return make_cons(args, body);
 }
 
+  LispObjRef  LispEnv::if_fn(LispObjRef cons, LispEnvRef env)
+  {
+	LispObjRef condition = car(cons);
+	LispObjRef result = eval(condition, env);
+	LispObjRef trueclause = cadr(cons);
+	LispObjRef falseclause = car(cdr(cdr(cons)));
+	if (!is_nil(result)) {
+	  return eval(trueclause, env);
+	} else {
+	  return eval(falseclause, env);
+	}
+  }
 } // namespace Lisp
