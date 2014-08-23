@@ -13,6 +13,7 @@
 ** TODO Use LispWeakRef for weak_ptr
 ** TODO Lisp Prim == std::function?
 	
+
 * Evaluation
 ** DONE Create eval skel
 ** DONE Eval ints
@@ -26,9 +27,6 @@
 ** DONE Eval symbol set
 ** TODO Eval if form
 ** DONE Eval primitive procedures
-
-
-Bugs
 ** TODO Eval apply lambda form 
 *** Apply is a primitive that takes a cons - car is body, cdr is values. car of body is args, cdr of body is code..
 ** TODO Eval lambda form
@@ -49,3 +47,4 @@ Bugs
 ** DONE Crash evaluating simple list
 ** DONE Lists don't get echoed
 ** TODO Dump environment in gdb
+

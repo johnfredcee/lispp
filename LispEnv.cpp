@@ -1,4 +1,6 @@
 
+// TO DO : Need c-set-style to ensure consistent formatting
+
 #include "LispObj.h"
 #include "LispEnv.h"
 #include "LispNil.h"
@@ -27,6 +29,7 @@ LispEnv::LispEnv() : parent_(LispEnvRef()) {
 	fEnv_["LAMBDA"]  = make_literal(PrimType(LispEnv::lambda_fn));
 	fEnv_["APPLY"]   = make_literal(PrimType(LispEnv::apply_fn));
 	fEnv_["IF"]      = make_literal(PrimType(LispEnv::if_fn));
+	fEnv_["PROGN"]   = make_literal(PrimType(LispEnv::prog_fn));
 }
 
 // constructor - new environment created with parent
@@ -166,16 +169,29 @@ LispObjRef LispEnv::lambda_fn(LispObjRef cons, LispEnvRef env)
   return make_cons(args, body);
 }
 
-  LispObjRef  LispEnv::if_fn(LispObjRef cons, LispEnvRef env)
-  {
-	LispObjRef condition = car(cons);
-	LispObjRef result = eval(condition, env);
-	LispObjRef trueclause = cadr(cons);
-	LispObjRef falseclause = car(cdr(cdr(cons)));
-	if (!is_nil(result)) {
-	  return eval(trueclause, env);
-	} else {
-	  return eval(falseclause, env);
+	LispObjRef  LispEnv::if_fn(LispObjRef cons, LispEnvRef env)
+	{
+		LispObjRef condition = car(cons);
+		LispObjRef result = eval(condition, env);
+		LispObjRef trueclause = cadr(cons);
+		LispObjRef falseclause = car(cdr(cdr(cons)));
+		if (!is_nil(result)) {
+			return eval(trueclause, env);
+		} else {
+			return eval(falseclause, env);
+		}
 	}
-  }
+
+	LispObjRef LispEnv::prog_fn(LispObjRef cons, LispEnvRef env)
+	{
+		LispObjRef result = nil;
+		LispObjRef fnx = cons;
+		while (!is_nil(fnx))
+		{
+			LispObjRef arg = car(fnx);
+			result = eval(arg, env);
+			fnx = cdr(fnx);
+		}
+		return result;
+	}
 } // namespace Lisp
