@@ -10,13 +10,13 @@
 #include "LispFixNum.h"
 
 namespace Lisp {
-  LispObjRef make_char(CChar val)
-  {
+LispObjRef make_char(CChar val)
+{
 	return boost::shared_ptr<LispObj>(new LispObj(val));
-  }
+}
 
-  bool is_char(LispObjRef obj)
-  {
+bool is_char(LispObjRef obj)
+{
 	return (obj->which() == CHAR);
-  }
+}
 }

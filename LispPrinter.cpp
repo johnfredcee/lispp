@@ -5,6 +5,7 @@
 #include "LispFixNum.h"
 #include "LispFloatNum.h"
 #include "LispString.h"
+#include "LispChar.h"
 #include "LispSymbol.h"
 #include "LispReader.h"
 #include "LispCons.h"
@@ -47,6 +48,13 @@ namespace Lisp {
 			output_ << "(";
 			print_cons(obj);
 			output_ << ")";			
+		} else if (is_char(obj)) {
+			CChar c = get_ctype<CharType>(obj);
+			if (isprint(c)) {
+				output_ << c;				
+			} else {
+				output_ << "#" << std::hex << (int) c << std::dec;
+			}
 		}
 		else
 			output_ << "#UNPRINTABLE#";
