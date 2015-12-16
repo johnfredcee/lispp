@@ -14,8 +14,19 @@
 using namespace std;
 
 namespace Lisp {
-	Printer::Printer(ostream& output) : output_(output) {
-		
+
+	Printer* Printer::printer = NULL;
+
+	Printer::Printer(ostream& output) : output_(output)
+	{
+		if (printer != NULL)
+			return;
+		printer = this;
+	}
+
+	Printer::~Printer()
+	{	
+		printer = NULL;
 	}
 
 	void Printer::print_cons(LispObjRef obj) {

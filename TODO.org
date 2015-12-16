@@ -26,8 +26,6 @@
 ** DONE Eval symbol set
 ** DONE Eval if form
 ** DONE Eval primitive procedures
-** TODO Eval apply lambda form 
-*** Apply is a primitive that takes a cons - car is body, cdr is values. car of body is args, cdr of body is code..
 ** TODO Eval lambda form
 *** Basically just cons
 ** TODO Eval PROG
