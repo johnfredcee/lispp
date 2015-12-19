@@ -51,6 +51,8 @@ public:
 
 	static  LispObjRef print_fn(LispObjRef cons, LispEnvRef  env);
 
+	static LispObjRef apply_fn(LispObjRef cons, LispEnvRef env);
+	
 	static LispObjRef lambda_fn(LispObjRef cons, LispEnvRef env);
 
 	static LispObjRef if_fn(LispObjRef cons, LispEnvRef env);

@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "LispObj.h"
+#include "LispNil.h"
 #include "LispCons.h"
 
 namespace Lisp
@@ -30,8 +31,16 @@ LispObjRef cdr(LispObjRef cons) {
 LispObjRef cadr(LispObjRef cons) {
 	assert(is_cons(cons));
 	LispObjRef ncar = get_ctype<ConsType>(cons).second;
+	assert(is_cons(ncar) | is_nil(ncar));
+	return !is_nil(ncar) ? car(ncar) : nil;
+}
+
+LispObjRef cddr(LispObjRef cons) {
+	assert(is_cons(cons));
+	LispObjRef ncar = get_ctype<ConsType>(cons).second;
 	assert(is_cons(ncar));
-	return car(ncar);
+	ncar = get_ctype<ConsType>(cons).second;	
+	return ncar;
 }
 
 bool is_cons(LispObjRef obj) {

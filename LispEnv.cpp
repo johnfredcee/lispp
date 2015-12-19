@@ -130,8 +130,51 @@ LispObjRef LispEnv::print_fn(LispObjRef cons, LispEnvRef env) {
 LispObjRef LispEnv::lambda_fn(LispObjRef cons, LispEnvRef env) {
 	(void) env;
 	LispObjRef args = cadr(cons);
-	LispObjRef body = car(cdr(cdr(cons)));
+	LispObjRef body = car(cdr(cdr(cons)));	
 	return make_cons(args, body);
+}
+
+LispObjRef LispEnv::apply_fn(LispObjRef cons, LispEnvRef env) {
+	LispObjRef result = nil;
+	// should be a cons cell [apply|-]-[fn|-]-[arg0|-]-[arg1|-]-...
+	LispObjRef obj = eval(cadr(cons), env);
+	// [fn|-]-[arg0|-]-[arg1|-]-...||
+    // [.|-]-[arg0|-]-[arg1]-[
+	// [lambda|-]-
+	if (is_cons(obj)) 
+	{
+		// must be function invocation -- function symbol
+		LispObjRef fnsym(car(obj));		
+		if (is_symbol(fnsym) || is_primitive(fnsym)) {
+			// it's a function
+			LispObjRef fn = is_symbol(fnsym) ? env->fref(get_ctype<SymbolType>(fnsym).name) : fnsym; 
+			if (is_primitive(fn)) {
+				CPrim cfn = (CPrim)(boost::get<PrimType>(*fn));
+				// call it on the cdr
+				result = cfn(cdr(obj), env);
+			}
+		}
+		if (is_cons(fnsym)) {
+			LispObjRef lambda(eval(car(fnsym), env));
+			if (is_cons(lambda)) {
+				// this should be a lambda form - args are car, cdr is body
+				LispObjRef params = car(lambda);
+				LispObjRef args   = cddr(obj);
+				LispEnvRef lambda_env(new LispEnv(env));				
+				LispObjRef param;
+				LispObjRef arg;				
+				do {
+					param = car(params);
+					arg = car(args);
+					lambda_env->set(get_ctype<SymbolType>(param).name, eval(arg,env));					
+					param = cadr(params);
+					arg = is_nil(arg) ? nil : cadr(args);					
+				} while (!is_nil(param));
+				result = eval(cdr(lambda), lambda_env); 
+			}
+		}
+	}	
+	return result;
 }
 
 LispObjRef  LispEnv::if_fn(LispObjRef cons, LispEnvRef env) {

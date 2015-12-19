@@ -39,23 +39,6 @@ namespace Lisp {
 				// call it on the cdr
 				return cfn(cdr(obj), env);
 			}
-			// lambda is represented by a cons ((args) (body))
-			if (is_cons(fn)) {
-				LispObjRef params = car(fn);
-				LispObjRef body = cdr(fn);
-				LispEnvRef lambda_env(new LispEnv(env));
-				LispObjRef param;
-				LispObjRef arg;
-				LispObjRef args = cadr(obj);
-				do {
-					param = car(params);
-					arg = eval(car(args));
-					lambda_env->set(get_ctype<SymbolType>(param).name, arg);
-					param = cadr(params);
-					arg = is_nil(arg) ? nil : cadr(args);
-				} while (!is_nil(param));
-				eval(body, lambda_env);
-			}
 		}
 	} 
 	return nil;		
