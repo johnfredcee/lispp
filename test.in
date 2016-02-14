@@ -1,6 +1,6 @@
 ((LAMBDA (X) X) 2)
-(DEFINE FN (LAMBDA (X Y) Y))
-(FN 1 3)
+(FN SEL2 (LAMBDA (X Y) Y))
+(SEL2 1 3)
 1234
 #32
 #\L

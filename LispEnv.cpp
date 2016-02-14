@@ -24,7 +24,7 @@ LispEnv::LispEnv() : parent_(LispEnvRef()) {
 	fEnv_["QUOTE"]   = make_literal(PrimType(LispQuote::quote_fn));
 	fEnv_["SET!"]    = make_literal(PrimType(LispEnv::set_fn));
 	fEnv_["DEFINE"]  = make_literal(PrimType(LispEnv::define_fn));
-	fEnv_["DEFUN"]   = make_literal(PrimType(LispEnv::defun_fn));
+	fEnv_["FN"]      = make_literal(PrimType(LispEnv::defun_fn));
 	fEnv_["CAR"]     = make_literal(PrimType(LispEnv::car_fn));
 	fEnv_["CDR"]     = make_literal(PrimType(LispEnv::cdr_fn));
 	fEnv_["PRINT"]   = make_literal(PrimType(LispEnv::print_fn));
@@ -65,7 +65,6 @@ LispObjRef LispEnv::set(std::string var, LispObjRef ref) {
 }
 
 // bind a symnbol to a variable in this environment
-// corresponts to define in sicp
 LispObjRef LispEnv::define(std::string var, LispObjRef ref) {
 	EnvironmentT::iterator it(env_.find(var));
 	if(it != env_.end()) {
@@ -129,8 +128,9 @@ LispObjRef LispEnv::print_fn(LispObjRef cons, LispEnvRef env) {
 
 LispObjRef LispEnv::lambda_fn(LispObjRef cons, LispEnvRef env) {
 	(void) env;
-	LispObjRef args = cadr(cons);
-	LispObjRef body = car(cdr(cdr(cons)));	
+	// really just returns an unevaluated cons
+	LispObjRef args = car(cons);
+	LispObjRef body = cdr(cons);
 	return make_cons(args, body);
 }
 

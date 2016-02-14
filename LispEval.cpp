@@ -13,7 +13,7 @@
 
 namespace Lisp {
 
-  LispObjRef Eval::operator()(LispObjRef obj, LispEnvRef env = LispEnv::globalEnv) {
+LispObjRef Eval::operator()(LispObjRef obj, LispEnvRef env, bool fplace) {
 
 	// trivial case :-)
 	if (is_nil(obj))
@@ -23,22 +23,22 @@ namespace Lisp {
 	  return obj;
 	// symbol lookup
 	if (is_symbol(obj)) {
-		return env->ref(get_ctype<SymbolType>(obj).name); // ((LispSymbol)(boost::get<SymbolType>(*obj))).first);
+		return fplace ? env->fref(get_ctype<SymbolType>(obj).name) : env->ref(get_ctype<SymbolType>(obj).name);
 	}
 	// cons cell
 	if (is_cons(obj)) 
 	{
 		// must be function invocation -- function symbol
-		LispObjRef fnsym(car(obj));
-		if (is_symbol(fnsym) || is_primitive(fnsym))
+		LispObjRef fnsym(eval(car(obj), env, is_symbol(car(obj))));
+		if ((is_symbol(fnsym)) | (is_primitive(fnsym)))
 		{	
-			LispObjRef fn = is_symbol(fnsym) ? env->fref(get_ctype<SymbolType>(fnsym).name) : fnsym; // 
 			// it's a function
-			if (is_primitive(fn)) {
-				CPrim cfn = (CPrim)(boost::get<PrimType>(*fn));
+			if (is_primitive(fnsym)) {
+				CPrim cfn = (CPrim)(boost::get<PrimType>(*fnsym));
 				// call it on the cdr
 				return cfn(cdr(obj), env);
 			}
+			// else -- apply
 		}
 	} 
 	return nil;		

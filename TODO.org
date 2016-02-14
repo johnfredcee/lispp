@@ -44,4 +44,7 @@
 ** DONE Crash evaluating simple list
 ** DONE Lists don't get echoed
 ** TODO Dump environment in gdb
-
+** TODO ((Lambda x (x x) (body)) args..) does not work because we don't know how to eval a cons
+** TODO is_primitive() does not work because we do not identify them
+** TODO are primitives local or global -- global I would have thought
+** TODO but then..local function definitions?

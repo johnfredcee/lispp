@@ -9,7 +9,7 @@ class LispEnv;
 
 class Eval {
 public:		
-	LispObjRef operator()(LispObjRef obj, LispEnvRef env);
+	LispObjRef operator()(LispObjRef obj, LispEnvRef env = LispEnv::globalEnv, bool fplace = false);
 };
 
 extern Lisp::Eval    eval;
