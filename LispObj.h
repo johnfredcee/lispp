@@ -126,6 +126,11 @@ typedef TLispType< CCons >  ConsType;
 /** primitive */
 typedef	 TLispType< CPrim > PrimType;
 
+/* lambda */
+typedef struct Lambda { LispObjRef args; LispObjRef body; Lambda(LispObjRef a, LispObjRef b) : args(a), body(b) {}; } CLambda;
+
+typedef TLispType< CLambda > LambdaType;
+
 enum LispObjectType {
 	NIL = 0,
 	CHAR,
@@ -134,11 +139,12 @@ enum LispObjectType {
 	SYMBOL,
 	STRING,
 	CONS,
+	LAMBDA,
 	PRIM
 };
 
 	
-typedef	 boost::variant< NullType, CharType, FixnumType, FloatnumType, SymbolType, StringType, ConsType, PrimType > LispObjBase;
+typedef	 boost::variant< NullType, CharType, FixnumType, FloatnumType, SymbolType, StringType, ConsType, PrimType, LambdaType > LispObjBase;
 	
 class LispObj : public LispObjBase {
 public:
@@ -169,7 +175,9 @@ public:
 
 	LispObj(const PrimType& primitive) : LispObjBase(primitive) {	
 	}
-	
+
+	LispObj(const LambdaType& lambda) : LispObjBase(lambda) {
+	}
 };
 
 template <typename T>
