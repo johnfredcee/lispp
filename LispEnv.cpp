@@ -10,6 +10,7 @@
 #include "LispPrimitive.h"
 #include "LispPrinter.h"
 #include "LispEval.h"
+#include "LispLambda.h"
 
 using namespace std;
 
@@ -131,7 +132,7 @@ LispObjRef LispEnv::lambda_fn(LispObjRef cons, LispEnvRef env) {
 	// really just returns an unevaluated cons
 	LispObjRef args = car(cons);
 	LispObjRef body = cdr(cons);
-	return make_cons(args, body);
+	return make_lambda(args, body);
 }
 
 LispObjRef LispEnv::apply_fn(LispObjRef cons, LispEnvRef env) {
