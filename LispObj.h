@@ -127,7 +127,7 @@ typedef TLispType< CCons >  ConsType;
 typedef	 TLispType< CPrim > PrimType;
 
 /* lambda */
-typedef struct Lambda { LispObjRef args; LispObjRef body; Lambda(LispObjRef a, LispObjRef b) : args(a), body(b) {}; } CLambda;
+typedef struct Lambda { LispObjRef args; LispObjRef body; Lambda() : args(LispObjRef()), body(LispObjRef()) {}; Lambda(LispObjRef a, LispObjRef b) : args(a), body(b) {}; } CLambda;
 
 typedef TLispType< CLambda > LambdaType;
 
@@ -139,8 +139,8 @@ enum LispObjectType {
 	SYMBOL,
 	STRING,
 	CONS,
-	LAMBDA,
-	PRIM
+	PRIM,
+	LAMBDA
 };
 
 	

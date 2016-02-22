@@ -56,6 +56,13 @@ void trace(LispObjRef obj)
 		case	PRIM:
 			BOOST_LOG_TRIVIAL(trace) << " prim() ";
 			break;
+		case	LAMBDA:
+			BOOST_LOG_TRIVIAL(trace) << " lambda() ";
+			BOOST_LOG_TRIVIAL(trace) << " == args() == ";
+			trace(get_ctype<LambdaType>(obj).args);
+			BOOST_LOG_TRIVIAL(trace) << " == body() == ";			
+			trace(get_ctype<LambdaType>(obj).body);				  
+			break;			
 	}
 	BOOST_LOG_TRIVIAL(trace) << "--";
 }

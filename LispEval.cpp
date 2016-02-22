@@ -10,6 +10,7 @@
 #include "LispSymbol.h"
 #include "LispPrimitive.h"
 #include "LispEval.h"
+#include "LispLambda.h"
 
 namespace Lisp {
 
@@ -23,7 +24,8 @@ LispObjRef Eval::operator()(LispObjRef obj, LispEnvRef env, bool fplace) {
 	  return obj;
 	// symbol lookup
 	if (is_symbol(obj)) {
-		return fplace ? env->fref(get_ctype<SymbolType>(obj).name) : env->ref(get_ctype<SymbolType>(obj).name);
+		LispObjRef result = fplace ? env->fref(get_ctype<SymbolType>(obj).name) : env->ref(get_ctype<SymbolType>(obj).name);
+		return result;
 	}
 	// cons cell
 	if (is_cons(obj)) 
@@ -36,9 +38,14 @@ LispObjRef Eval::operator()(LispObjRef obj, LispEnvRef env, bool fplace) {
 			if (is_primitive(fnsym)) {
 				CPrim cfn = (CPrim)(boost::get<PrimType>(*fnsym));
 				// call it on the cdr
-				return cfn(cdr(obj), env);
+				LispObjRef result = cfn(cdr(obj), env);
+				return result;
 			}
-			// else -- apply
+			// else -- apply			
+			if (is_lambda(fnsym)) {
+				// fnsym is the lambda
+				// cdr(obj) is the values applied
+			}
 		}
 	} 
 	return nil;		
