@@ -41,12 +41,26 @@ LispObjRef Eval::operator()(LispObjRef obj, LispEnvRef env, bool fplace) {
 				LispObjRef result = cfn(cdr(obj), env);
 				return result;
 			}
-			// else -- apply			
-			if (is_lambda(fnsym)) {
-				// fnsym is the lambda
-				// cdr(obj) is the values applied
-			}
 		}
+		// else -- apply			
+		if (is_lambda(fnsym)) {
+			// fnsym is the lambda
+			// cdr(obj) is the values applied
+			LispObjRef params = cdr(obj);
+			LispEnvRef newEnv(new LispEnv(env));
+			LispObjRef args = get_ctype<LambdaType>(fnsym).args;
+			while (!is_nil(args)) {
+				LispObjRef param = car(params);
+				LispObjRef arg = car(args);
+				if (is_symbol(arg)) {
+					newEnv->set(get_ctype<SymbolType>(fnsym).name,param);
+				}
+				if (is_cons(params))
+					params = cdr(params);
+				args = cdr(args);
+				return eval(get_ctype<LambdaType>(fnsym).body, newEnv);
+			}
+		}		
 	} 
 	return nil;		
   };
