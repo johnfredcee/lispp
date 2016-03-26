@@ -53,7 +53,7 @@ LispObjRef Eval::operator()(LispObjRef obj, LispEnvRef env, bool fplace) {
 				LispObjRef param = car(params);
 				LispObjRef arg = car(args);
 				if (is_symbol(arg)) {
-					newEnv->set(get_ctype<SymbolType>(fnsym).name,param);
+					newEnv->set(get_ctype<SymbolType>(arg).name,param);
 				}
 				if (is_cons(params))
 					params = cdr(params);
