@@ -59,8 +59,7 @@ LispObjRef LispEnv::set(std::string var, LispObjRef ref) {
 		it->second = ref;
 		return ref;
 	} else {
-		if(parent_ != NULL)
-			return parent_->set(var, ref);
+		env_[var] = ref;
 	}
 	return nil;
 }
@@ -131,7 +130,7 @@ LispObjRef LispEnv::lambda_fn(LispObjRef cons, LispEnvRef env) {
 	(void) env;
 	// really just returns an unevaluated cons
 	LispObjRef args = car(cons);
-	LispObjRef body = cdr(cons);
+	LispObjRef body = car(cdr(cons));
 	return make_lambda(args, body);
 }
 

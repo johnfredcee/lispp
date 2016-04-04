@@ -58,8 +58,9 @@ LispObjRef Eval::operator()(LispObjRef obj, LispEnvRef env, bool fplace) {
 				if (is_cons(params))
 					params = cdr(params);
 				args = cdr(args);
-				return eval(get_ctype<LambdaType>(fnsym).body, newEnv);
 			}
+			return eval(get_ctype<LambdaType>(fnsym).body, newEnv);
+			
 		}		
 	} 
 	return nil;		
