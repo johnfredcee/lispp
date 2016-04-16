@@ -20,7 +20,7 @@ LispObjRef Eval::operator()(LispObjRef obj, LispEnvRef env, bool fplace) {
 	if (is_nil(obj))
 	  return nil;
 	// constant literal 
-	if (is_char(obj) ||	is_fixnum(obj) || is_floatnum(obj) || is_string(obj))
+	if (is_char(obj) ||	is_fixnum(obj) || is_floatnum(obj) || is_string(obj) || is_primitive(obj))
 	  return obj;
 	// symbol lookup
 	if (is_symbol(obj)) {

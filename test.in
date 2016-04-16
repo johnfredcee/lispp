@@ -1,3 +1,5 @@
+'QUOTED
+'(1 1.2 (2 4) 63)
 ((LAMBDA (X) X) 2)
 (FN SEL2 (LAMBDA (X Y) Y))
 (SEL2 1 3)
@@ -6,8 +8,6 @@
 #\L
 NIL
 ()
-'QUOTED
-'(1 1.2 (2 4) 63)
 ASYMBOL
 (DEFINE AVARIABLE NIL)
 (SET! AVARIABLE 35)
