@@ -109,8 +109,8 @@ LispObjRef LispEnv::define_fn(LispObjRef cons, LispEnvRef env) {
 
 LispObjRef LispEnv::defun_fn(LispObjRef cons, LispEnvRef env) {
 	if(is_symbol(car(cons)))
-		return env->fset(get_ctype<SymbolType>(car(cons)).name, eval(cadr(cons), env));
-	return nil;
+		env->fset(get_ctype<SymbolType>(car(cons)).name, eval(cadr(cons), env));
+	return car(cons);
 }
 
 LispObjRef LispEnv::car_fn(LispObjRef cons, LispEnvRef env) {
